@@ -1,0 +1,3 @@
+*.pyc
+*~
+ignored_files/*
