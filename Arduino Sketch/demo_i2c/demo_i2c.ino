@@ -24,7 +24,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+//  delay(10);
 } // end loop
 
 // callback for received data

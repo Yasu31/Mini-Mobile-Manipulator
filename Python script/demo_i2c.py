@@ -38,7 +38,7 @@ while True:
     for i in data_list:
     	#Sends to the Slaves
         writeNumber(int(ord(i)))
-        time.sleep(.1)
+        # time.sleep(.1)
 
     # write out newline character
     writeNumber(int(0x0A))
