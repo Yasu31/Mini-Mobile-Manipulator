@@ -1,3 +1,4 @@
 *.pyc
 *~
 ignored_files/*
+*DS_Store
