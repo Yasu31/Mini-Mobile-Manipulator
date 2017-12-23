@@ -22,4 +22,4 @@ def writeString(str):
 while True:
     data=bus.read_i2c_block_data(address, 0)
     print(data)
-    time.sleep(0.5)
+    time.sleep(1)

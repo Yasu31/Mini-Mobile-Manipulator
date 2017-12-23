@@ -15,8 +15,6 @@ bus = smbus.SMBus(1)
 #Slave Address 1
 address = 0x04
 
-#Slave Address 2
-# address_2 = 0x05
 
 def writeNumber(value):
     bus.write_byte(address, value)

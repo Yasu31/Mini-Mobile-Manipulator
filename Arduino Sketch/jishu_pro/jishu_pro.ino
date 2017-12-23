@@ -6,7 +6,13 @@
 
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
+#define LSM9DS1_M  0x1E // SPIアドレス設定 0x1C if SDO_M is LOW
+#define LSM9DS1_AG  0x6B // SPIアドレス設定 if SDO_AG is LOW
 
+float gyr[3]={0.0,0.0,0.0};
+float acc[3]={0.0,0.0,0.0};
+float mag[3]={0.0,0.0,0.0};
+LSM9DS1 imu;
 
 float sensorPos[3]={0.0,0.0,0.0};
 float sensorOri[4]={0.0,0.0,0.0,0.0};
@@ -47,6 +53,9 @@ void loop() {
     Serial.print(angleCommand[i]);
   }
   Serial.print("\n");
+  
+  String sendTxt="a"+String(acc[0])+"\t"+String(acc[1])+"\t"+String(acc[2])+"\t\n";
+  Wire.write(sendTxt.c_str());
   delay(100);
   
 }

@@ -1,9 +1,4 @@
-LSM9DS1 imu;
-#define LSM9DS1_M  0x1E // SPIアドレス設定 0x1C if SDO_M is LOW
-#define LSM9DS1_AG  0x6B // SPIアドレス設定 if SDO_AG is LOW
-float gyr[3]={0.0,0.0,0.0};
-float acc[3]={0.0,0.0,0.0};
-float mag[3]={0.0,0.0,0.0};
+
 
 void readSensor(){
   
