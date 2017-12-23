@@ -49,6 +49,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   readSensor();
-  
+  Serial.print("\nax\t"+String(acc[0])+"\tay\t"+String(acc[1])+"\taz\t"+String(acc[2]));
+  delay(1);
 }
 
