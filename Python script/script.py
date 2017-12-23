@@ -17,8 +17,9 @@ class ArduinoInterface:
         # for i in data_list:
         #     self.bus.write_byte(self.address, int(ord(i)))
         # self.bus.write_byte(self.address, int(0x0A))
-        self.bus.write_i2c_block_data(self.address,0,value)
-        return self.bus.read_byte(self.address)
+        valueToSend=[int(ord(i)) for i in list(value)]
+        self.bus.write_i2c_block_data(self.address,0,valueToSend)
+        # return self.bus.read_byte(self.address)
 
 arduino=ArduinoInterface(0x04)
 while(True):
