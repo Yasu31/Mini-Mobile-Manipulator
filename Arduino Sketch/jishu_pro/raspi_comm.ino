@@ -7,28 +7,26 @@ void receiveData(int byteCount){
   String tmpData="";
   while(Wire.available()){
     indicator=Wire.read();
-    if(indicator != 's'){
-      continue;
-    }
     while(true){
       recentData=Wire.read();
       if (recentData=='\n'){
         i=0;
+        float received=tmpData.toFloat();
+        Serial.print("received "+String(received));
         switch(indicator){
-          case 'p':
-            for (int j=0; j<7; j++){
-              angleCommand[j]=data[j];
-            }
+          case 'a':
+            dataToSend=acc[0];
+            break;
+          case 'b':
+            dataToSend=acc[1];
+            break;
+          case 'c':
+            dataToSend=acc[2];
             break;
           default:
             break;
         }
         break;
-      }
-      else if(recentData='\t'){
-        data[i]=tmpData.toFloat();
-        i++;
-        tmpData="";
       }
       else{
         tmpData=tmpData+recentData;
@@ -37,4 +35,7 @@ void receiveData(int byteCount){
   }
 }
 
+void sendData(){
+  Wire.write(dataToSend);
+}
 

@@ -18,6 +18,7 @@ float sensorPos[3]={0.0,0.0,0.0};
 float sensorOri[4]={0.0,0.0,0.0,0.0};
 float angleCommand[7]={0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 
+int dataToSend=0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -25,6 +26,7 @@ void setup() {
   Wire.begin(SLAVE_ADDRESS);
   // define callbacks for i2c communication
   Wire.onReceive(receiveData);
+  Wire.onRequest(sendData);
 
   imu.settings.device.commInterface = IMU_MODE_I2C;
   imu.settings.device.mAddress = LSM9DS1_M;
@@ -47,16 +49,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   readSensor();
-  Serial.print(acc[0]);
-  Serial.print("\t");
-  for(int i=0;i<7;i++){
-    Serial.print(angleCommand[i]);
-  }
-  Serial.print("\n");
-  
-  String sendTxt="a"+String(acc[0])+"\t"+String(acc[1])+"\t"+String(acc[2])+"\t\n";
-  Wire.write(sendTxt.c_str());
-  delay(100);
   
 }
 
