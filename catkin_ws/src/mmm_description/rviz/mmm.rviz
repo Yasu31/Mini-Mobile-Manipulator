@@ -59,32 +59,27 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        arm:
+        base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        finger:
+        link0:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        foot:
+        link1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        hand:
+        link2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        leg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        toe:
+        link3:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -123,16 +118,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.41451788
+      Distance: 0.395763814
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.161420524
-        Y: -0.0449433513
-        Z: 0.24282752
+        X: -0.0402528159
+        Y: -0.00250656903
+        Z: 0.0849701166
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
