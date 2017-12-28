@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<robot name="arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="PI" value="3.14159265359"/>
+
+  <!-- Joints Control in Gazebo -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+  </gazebo>
+
+  <!-- Geometrical properties -->
+  <xacro:property name="link_side" value="0.02"/>
+  <xacro:property name="joint_radius" value="0.018"/>
+  <xacro:property name="joint_length" value="0.025"/>
+  <xacro:property name="toe_length" value="0.03"/>
+  <xacro:property name="foot_length" value="0.04"/>
+  <xacro:property name="leg_length" value="0.40"/>
+  <xacro:property name="arm_length" value="0.30"/>
+  <xacro:property name="hand_length" value="0.04"/>
+  <xacro:property name="finger_length" value="0.03"/>
+
+  <!-- Materials -->
+  <material name="orange">
+    <color rgba="1.00 0.67 0.02 1.00"/>
+  </material>
+
+  <material name="gray">
+    <color rgba="0.80 0.80 0.80 1.00"/>
+  </material>
+
+  <!-- Generates a box visual/collision/inertial -->
+  <xacro:macro name="prism_vci" params="side length mass:=1 *origin">
+
+    <xacro:macro name="prism_geometry">
+      <xacro:insert_block name="origin"/>
+      <geometry>
+        <box size="${side} ${side} ${length}"/>
+      </geometry>
+    </xacro:macro>
+
+    <visual>
+      <xacro:prism_geometry/>
+      <material name="orange"/>
+    </visual>
+
+    <collision>
+      <xacro:prism_geometry/>
+    </collision>
+
+    <inertial>
+      <xacro:insert_block name="origin"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${(mass/12)*(side*side+length*length)}"
+               iyy="${(mass/12)*(side*side+length*length)}"
+               izz="${(mass/6)*(side*side)}"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+
+  </xacro:macro>
+
+  <!-- Generates a cylinder visual/collision -->
+  <xacro:macro name="cylinder_vc" params="radius length *origin">
+
+    <xacro:macro name="cylinder_geometry">
+      <xacro:insert_block name="origin"/>
+      <geometry>
+        <cylinder length="${length}" radius="${radius}"/>
+      </geometry>
+    </xacro:macro>
+
+    <visual>
+      <xacro:cylinder_geometry/>
+      <material name="gray"/>
+    </visual>
+
+    <collision>
+      <xacro:cylinder_geometry/>
+    </collision>
+
+  </xacro:macro>
+
+  <!-- Generates child joint of parent -->
+  <xacro:macro name="arm_joint" params="child parent dist:=0 axis">
+
+    <joint name="${parent}_${child}_joint" type="revolute">
+      <origin xyz="0 0 ${dist}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <axis xyz="${axis}"/>
+      <limit effort="40.0"
+             velocity="1.0"
+             lower="${-PI}"
+             upper="${PI}"/>
+    </joint>
+
+    <!-- Required for ROS control -->
+    <transmission name="${parent}_${child}_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${parent}_${child}_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${parent}_${child}_actuator"/>
+    </transmission>
+
+    <link name="${parent}">
+
+      <xacro:prism_vci length="${dist}" side="${link_side}">
+        <origin xyz="0 0 ${dist/2}" rpy="0 0 0"/>
+      </xacro:prism_vci>
+
+      <xacro:cylinder_vc radius="${joint_radius}" length="${joint_length}">
+
+        <xacro:if value="${axis=='0 0 1'}">
+          <origin xyz="0 0 ${dist}" rpy="0 0 0"/>
+        </xacro:if>
+
+        <xacro:if value="${axis=='1 0 0'}">
+          <origin xyz="0 0 ${dist}" rpy="0 ${PI/2} 0"/>
+        </xacro:if>
+
+        <xacro:if value="${axis=='0 1 0'}">
+          <origin xyz="0 0 ${dist}" rpy="${PI/2} 0 0"/>
+        </xacro:if>
+
+      </xacro:cylinder_vc>
+
+    </link>
+
+    <gazebo reference="${parent}">
+      <material>Gazebo/Orange</material>
+    </gazebo>
+
+  </xacro:macro>
+
+  <!-- World frame (for Gazebo) -->
+  <link name="world"/>
+
+  <!-- Arm fixed to world frame  -->
+  <joint name="world_foot_joint" type="fixed">
+    <parent link="world"/>
+    <child link="toe"/>
+  </joint>
+
+  <!-- Joints Chain -->
+  <xacro:arm_joint parent="toe" child="foot" axis="0 0 1" dist="${toe_length}"/>
+  <xacro:arm_joint parent="foot" child="leg" axis="1 0 0" dist="${foot_length}"/>
+  <xacro:arm_joint parent="leg" child="arm" axis="1 0 0" dist="${leg_length}"/>
+  <xacro:arm_joint parent="arm" child="hand" axis="0 0 1" dist="${arm_length}"/>
+  <xacro:arm_joint parent="hand" child="finger" axis="1 0 0" dist="${hand_length}"/>
+
+  <!-- End effector -->
+  <link name="finger">
+    <xacro:prism_vci length="${finger_length}" side="${link_side}">
+      <origin xyz="0 0 ${finger_length/2}" rpy="0 0 0"/>
+    </xacro:prism_vci>
+  </link>
+
+  <gazebo reference="finger">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+</robot>
