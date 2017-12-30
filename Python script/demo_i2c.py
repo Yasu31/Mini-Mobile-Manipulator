@@ -5,40 +5,31 @@
 #GPIO3 -> SCL
 
 #Import the Library Requreid
-import smbus
+from smbus2 import SMBus, i2c_msg
 import time
 
 # for RPI version 1, use "bus = smbus.SMBus(0)"
-bus = smbus.SMBus(1)
+# bus = smbus.SMBus(1)
 
 # This is the address we setup in the Arduino Program
 #Slave Address 1
 address = 0x04
 
-
-def writeNumber(value):
-    bus.write_byte(address, value)
-    # bus.write_byte(address_2, value)
-    # bus.write_byte_data(address, 0, value)
+# https://github.com/kplindegaard/smbus2
+def writeString(string):
+    intList=[int(ord(i)) for i in list(string)]
+    msg=i2c_msg.write(address, intList)
+    with SMBusWrapper(1) as bus:
+        bus.i2c_rdwr(msg)
     return -1
 
+# returns a
 def readNumber():
-    # number = bus.read_byte(address)
-    number = bus.read_byte_data(address, 1)
-    return number
+    msg=i2c_msg.read(address, 200)
+    with SMBusWrapper(1) as bus:
+        bus.i2c_rdwr(msg)
+    string="".join(list(msg))
+    return string
 
-while True:
-	# Receives the data from the User
-    data = raw_input("Enter the data to be sent : ")
-
-    # list() converts iterable to list
-    data_list = list(data)
-    for i in data_list:
-    	#Sends to the Slaves
-        writeNumber(int(ord(i)))
-        # time.sleep(.1)
-
-    # write out newline character
-    writeNumber(int(0x0A))
 
 #End of the Script

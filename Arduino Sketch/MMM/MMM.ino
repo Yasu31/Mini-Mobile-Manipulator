@@ -1,3 +1,5 @@
+#include <IcsClass.h>
+
 //https://github.com/sparkfun/LSM9DS1_Breakout/blob/master/Libraries/Arduino/examples/LSM9DS1_Basic_I2C/LSM9DS1_Basic_I2C.ino
 #include <LSM9DS1_Types.h>
 #include <SparkFunLSM9DS1.h>
@@ -9,6 +11,8 @@
 #define LSM9DS1_M  0x1E // SPIアドレス設定 0x1C if SDO_M is LOW
 #define LSM9DS1_AG  0x6B // SPIアドレス設定 if SDO_AG is LOW
 
+#define NUM_SERVOS 7
+
 float gyr[3]={0.0,0.0,0.0};
 float acc[3]={0.0,0.0,0.0};
 float mag[3]={0.0,0.0,0.0};
@@ -18,7 +22,6 @@ float sensorPos[3]={0.0,0.0,0.0};
 float sensorOri[4]={0.0,0.0,0.0,0.0};
 float angleCommand[7]={0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 
-int dataToSend=0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -50,6 +53,6 @@ void loop() {
   // put your main code here, to run repeatedly:
   readSensor();
   Serial.print("\nax\t"+String(acc[0])+"\tay\t"+String(acc[1])+"\taz\t"+String(acc[2]));
-  delay(1);
+  delay(1000);
 }
 
