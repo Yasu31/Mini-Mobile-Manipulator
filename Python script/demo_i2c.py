@@ -25,7 +25,7 @@ def writeData(noun, verb):
     return -1
 
 def bytes2Int(bytes):
-    return int.from_bytes(bytes, signed=True)
+    return int.from_bytes(bytes,byteorder='big', signed=True)
 
 # https://docs.python.org/2/library/struct.html
 # reads bytes from Arduino and return it as list of integers
@@ -36,8 +36,8 @@ def readData():
         print(block)
         # block[0:1] make up a two-byte integer, with twos complement.
         # Next, we try to convert block[] to a list of integers.
-        for i in range(NUM_BYTES/2):
-            intList.append(bytes2Int(block[i:i+2]))
+        for i in range(int(NUM_BYTES/2)):
+            intList.append(bytes2Int(block[i*2:i*2+2]))
     print(intList)
     return intList
 
