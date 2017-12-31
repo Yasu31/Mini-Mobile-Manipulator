@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #RPi Pinouts
 
 #I2C Pins
