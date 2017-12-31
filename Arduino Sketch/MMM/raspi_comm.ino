@@ -1,24 +1,45 @@
+//convets two bytes to an integer, that is in the twos complement format
+int bytes2Val(byte byteArray[]){
+  int value;
+  if (byteArray[0]>>7==1){
+    // it is a negative value
+    value=((~byteArray[0])<<8)|(~byteArray[1]);
+    value+=1;
+  }
+  else{
+    value=((byteArray[0])<<8)+(byteArray[1]);
+  }
+  return value;
+}
 
 void receiveData(int byteCount){
+  byte receivedBytes[byteCount];
+  for(int i=0; Wire.available() ; i++){
+    receivedBytes[i]=Wire.read();
+  }
+  int noun=bytes2Val(&receivedBytes[0]);
+  int verb=bytes2Val(&receivedBytes[2]);
+  Serial.print("noun\t"+(String)noun+"\tverb\t"+(String)verb);
+  
 //  int i=0;
 //  char indicator;
 //  char recentData;
 //  float data[7];
 //  String tmpData="";
 
-  char index;
-  bool firstDigitReceived=false;
-  String data;
-  while(Wire.available()){
-    if(firstDigitReceived){
-      data+=Wire.read();
-    }
-    else{
-      index=Wire.read();
-      firstDigitReceived=true;
-    }
-  }
-  Serial.print("Index:"+(String)index+"\tData:"+data);
+//  char index;
+//  bool firstDigitReceived=false;
+//  String data;
+//  while(Wire.available()){
+//    if(firstDigitReceived){
+//      data+=Wire.read();
+//    }
+//    else{
+//      index=Wire.read();
+//      firstDigitReceived=true;
+//    }
+//  }
+//  Serial.print("Index:"+(String)index+"\tData:"+data);
   
 //    tmpData+=Wire.read();
 //    indicator=Wire.read();
