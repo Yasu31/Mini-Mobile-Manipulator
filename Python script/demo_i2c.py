@@ -19,7 +19,7 @@ address = 0x04
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
 def writeData(noun, verb):
-    bytesToSend=struct.pack('!h', noun, verb)
+    bytesToSend=struct.pack('!hh', noun, verb)
     with SMBusWrapper(1) as bus:
         bus.write_i2c_block_data(address, 0, bytesToSend)
     return -1
