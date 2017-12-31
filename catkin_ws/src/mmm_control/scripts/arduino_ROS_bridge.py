@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+# pip3 install pyYAML
+# pip3 install rospkg
+# pip3 install catkin_pkg
 import i2c
 import rospy
 from sensor_msgs import JointState

@@ -16,17 +16,18 @@ void receiveData(int byteCount){
     receivedBytes[i]=Wire.read();
     Serial.print((String)receivedBytes[i]+"\t");
   }
-  
+
   int noun=bytes2Val(&receivedBytes[1]);
   int verb=bytes2Val(&receivedBytes[3]);
   Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);
+  // do actions based on noun-word pair
 }
 
 //get integer from -2^15 ~ 2^15, convert to 2 bytes
 void val2Bytes(byte byteArray[], int value){
   byteArray[0]=value>>8;
   byteArray[1]=value;
-  return; 
+  return;
 }
 void sendData(){
 //  bytesToSend stores the data to be sent to RasPi.
@@ -43,11 +44,13 @@ void sendData(){
   }
 
 //  Next 12(=6*2) bytes are IMU data
-  for(int i=0; i<6; i++){
-    int IMU=123;
-    val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
+//  for(int i=0; i<6; i++){
+//    int IMU=123;
+//    val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
+//  }
+  Serial.print("\nsending data\n");
+  for(int i=0; i<NUM_BYTES; i++){
+    Serial.print((String)bytesToSend[i]+"\t");
   }
-  Serial.print("\n\nsending data\n");
   Wire.write(bytesToSend, NUM_BYTES);
 }
-
