@@ -7,29 +7,33 @@
 #Import the Library Requreid
 from smbus2 import SMBus, i2c_msg
 import time
+import struct
 
-# for RPI version 1, use "bus = smbus.SMBus(0)"
-# bus = smbus.SMBus(1)
+# number of bytes we receive from Arduino
+NUM_BYTES=36
 
 # This is the address we setup in the Arduino Program
 #Slave Address 1
 address = 0x04
 
 # https://github.com/kplindegaard/smbus2
-def writeString(string):
-    intList=[int(ord(i)) for i in list(string)]
-    msg=i2c_msg.write(address, intList)
+# send NOUN and VERB
+def writeData(noun, verb):
+    msg=i2c_msg.write(address, struct.pack('!h', noun, verb))
     with SMBusWrapper(1) as bus:
         bus.i2c_rdwr(msg)
     return -1
 
-# returns a
-def readNumber():
-    msg=i2c_msg.read(address, 200)
+# https://docs.python.org/2/library/struct.html
+# reads bytes from Arduino and return it as list of integers
+def readData():
+    msg=i2c_msg.read(address, NUM_BYTES)
     with SMBusWrapper(1) as bus:
         bus.i2c_rdwr(msg)
-    string="".join(list(msg))
-    return string
+    data=list(msg)
+    intList=list(struct.unpack('!h',data))
+    print(intList)
+    return intList
 
 
 #End of the Script
