@@ -1,77 +1,25 @@
 //convets two bytes to an integer, that is in the twos complement format
 int bytes2Val(byte byteArray[]){
   int value;
-  if (byteArray[0]>>7==1){
-    // it is a negative value
-    value=((~byteArray[0])<<8)|(~byteArray[1]);
-    value+=1;
-  }
-  else{
-    value=((byteArray[0])<<8)+(byteArray[1]);
-  }
+  value=((byteArray[0])<<8)|(byteArray[1]);
   return value;
 }
 
 void receiveData(int byteCount){
+  if(byteCount<5){
+    return;
+  }
   byte receivedBytes[byteCount];
+
+  Serial.print("\n");
   for(int i=0; Wire.available() ; i++){
     receivedBytes[i]=Wire.read();
+    Serial.print((String)receivedBytes[i]+"\t");
   }
-  int noun=bytes2Val(&receivedBytes[0]);
-  int verb=bytes2Val(&receivedBytes[2]);
-  Serial.print("noun\t"+(String)noun+"\tverb\t"+(String)verb);
   
-//  int i=0;
-//  char indicator;
-//  char recentData;
-//  float data[7];
-//  String tmpData="";
-
-//  char index;
-//  bool firstDigitReceived=false;
-//  String data;
-//  while(Wire.available()){
-//    if(firstDigitReceived){
-//      data+=Wire.read();
-//    }
-//    else{
-//      index=Wire.read();
-//      firstDigitReceived=true;
-//    }
-//  }
-//  Serial.print("Index:"+(String)index+"\tData:"+data);
-  
-//    tmpData+=Wire.read();
-//    indicator=Wire.read();
-//    while(true){
-//      recentData=Wire.read();
-//      if (recentData=='\n'){
-//        i=0;
-//        float received=tmpData.toFloat();
-//        Serial.print("received "+String(received));
-//        switch(indicator){
-//          case 'a':
-//            dataToSend=acc[0];
-//            break;
-//          case 'b':
-//            dataToSend=acc[1];
-//            break;
-//          case 'c':
-//            dataToSend=acc[2];
-//            break;
-//          default:
-//            break;
-//        }
-//        break;
-//      }
-//      else{
-//        tmpData=tmpData+recentData;
-//      }
-//    }
-//  }
-//  Serial.print(tmpData+" received\n");
-
-
+  int noun=bytes2Val(&receivedBytes[1]);
+  int verb=bytes2Val(&receivedBytes[3]);
+  Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);
 }
 
 //get integer from -2^15 ~ 2^15, convert to 2 bytes
@@ -90,20 +38,16 @@ void sendData(){
 
 //   First 14(=NUM_SERVOS*2) bytes are servo position data.
   for(int i=0;i<NUM_SERVOS;i++){
-    int servo=1000*i;//krs.posDeg100(krs.getPos(i)); //-13500~13500
+    int servo=-1000*i;//krs.posDeg100(krs.getPos(i)); //-13500~13500
     val2Bytes(&bytesToSend[2*i], servo);
   }
 
 //  Next 12(=6*2) bytes are IMU data
-  for(int i=0; i<12; i++){
+  for(int i=0; i<6; i++){
     int IMU=123;
     val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
   }
   Serial.print("\n\nsending data\n");
-  for(int i=0; i<NUM_BYTES; i++){
-    Serial.print(String(bytesToSend[i])+" ");
-  }
-  
   Wire.write(bytesToSend, NUM_BYTES);
 }
 
