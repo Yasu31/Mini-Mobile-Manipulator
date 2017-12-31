@@ -78,6 +78,11 @@ void sendData(){
     int IMU=123;
     val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
   }
+  Serial.print("\n\nsending data\n");
+  for(int i=0; i<NUM_BYTES; i++){
+    Serial.print(String(bytesToSend[i])+" ");
+  }
+  
   Wire.write(bytesToSend, NUM_BYTES);
 }
 

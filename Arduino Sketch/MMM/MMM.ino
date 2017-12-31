@@ -12,7 +12,7 @@
 #define LSM9DS1_AG  0x6B // SPIアドレス設定 if SDO_AG is LOW
 
 #define NUM_SERVOS 7
-#define NUM_BYTES 36
+#define NUM_BYTES 32
 
 float gyr[3]={0.0,0.0,0.0};
 float acc[3]={0.0,0.0,0.0};

@@ -24,17 +24,20 @@ def writeData(noun, verb):
         bus.i2c_rdwr(msg)
     return -1
 
+def bytes2Int(bytes):
+    return int.from_bytes(bytes, signed=True)
+
 # https://docs.python.org/2/library/struct.html
 # reads bytes from Arduino and return it as list of integers
 def readData():
-    msg=i2c_msg.read(address, NUM_BYTES)
+    intList=[]
     with SMBusWrapper(1) as bus:
-        #bus.i2c_rdwr(msg)
         block=bus.read_i2c_block_data(address, 0, NUM_BYTES)
         print(block)
-    #data=list(msg)
-    #print(data)
-    intList=list(struct.unpack('!h',data))
+        # block[0:1] make up a two-byte integer, with twos complement.
+        # Next, we try to convert block[] to a list of integers.
+        for i in range(NUM_BYTES/2):
+            intList.append(bytes2Int(block[i:i+2]))
     print(intList)
     return intList
 
