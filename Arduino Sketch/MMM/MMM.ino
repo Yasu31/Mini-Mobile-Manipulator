@@ -32,28 +32,28 @@ void setup() {
   Wire.onReceive(receiveData);
   Wire.onRequest(sendData);
 
-  imu.settings.device.commInterface = IMU_MODE_I2C;
-  imu.settings.device.mAddress = LSM9DS1_M;
-  imu.settings.device.agAddress = LSM9DS1_AG;
-  
-  if (!imu.begin())                                     //センサ接続エラー時の表示
-
-  {
-    Serial.println("Failed to communicate with LSM9DS1.");
-    Serial.println("Double-check wiring.");
-    Serial.println("Default settings in this sketch will " \
-                   "work for an out of the box LSM9DS1 " \
-                   "Breakout, but may need to be modified " \
-                   "if the board jumpers are.");
-    while (1)
-      ;
-  }
+//  imu.settings.device.commInterface = IMU_MODE_I2C;
+//  imu.settings.device.mAddress = LSM9DS1_M;
+//  imu.settings.device.agAddress = LSM9DS1_AG;
+//  
+//  if (!imu.begin())                                     //センサ接続エラー時の表示
+//
+//  {
+//    Serial.println("Failed to communicate with LSM9DS1.");
+//    Serial.println("Double-check wiring.");
+//    Serial.println("Default settings in this sketch will " \
+//                   "work for an out of the box LSM9DS1 " \
+//                   "Breakout, but may need to be modified " \
+//                   "if the board jumpers are.");
+//    while (1)
+//      ;
+//  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  readSensor();
-  Serial.print("\nax\t"+String(acc[0])+"\tay\t"+String(acc[1])+"\taz\t"+String(acc[2]));
+//  readSensor();
+//  Serial.print("\nax\t"+String(acc[0])+"\tay\t"+String(acc[1])+"\taz\t"+String(acc[2]));
   delay(1000);
 }
 
