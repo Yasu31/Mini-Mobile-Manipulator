@@ -5,12 +5,12 @@
 #GPIO3 -> SCL
 
 #Import the Library Requreid
-from smbus2 import SMBus, i2c_msg
+from smbus2 import SMBusWrapper, i2c_msg
 import time
 import struct
 
 # number of bytes we receive from Arduino
-NUM_BYTES=36
+NUM_BYTES=32
 
 # This is the address we setup in the Arduino Program
 #Slave Address 1
@@ -29,8 +29,11 @@ def writeData(noun, verb):
 def readData():
     msg=i2c_msg.read(address, NUM_BYTES)
     with SMBusWrapper(1) as bus:
-        bus.i2c_rdwr(msg)
-    data=list(msg)
+        #bus.i2c_rdwr(msg)
+        block=bus.read_i2c_block_data(address, 0, NUM_BYTES)
+        print(block)
+    #data=list(msg)
+    #print(data)
     intList=list(struct.unpack('!h',data))
     print(intList)
     return intList
