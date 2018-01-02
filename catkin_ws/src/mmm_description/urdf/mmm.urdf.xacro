@@ -52,7 +52,7 @@
   </material>
 
   <material name="gray">
-    <color rgba="0.40 0.40 0.40 1.00"/>
+    <color rgba="0.90 0.90 0.90 1.00"/>
   </material>
 
   <!-- World frame (for Gazebo) -->
@@ -107,6 +107,43 @@
   <xacro:create_joint index="5" x="-15.8" y="-15.9" z="40" axis="0 1 0"/>
   <xacro:create_link index="5"/>
 
+  <xacro:create_joint index="6" y="13.9" z="69.5" axis="0 0 1"/>
+  <xacro:create_link index="6"/>
+
+  <xacro:create_joint index="7" y="-13.9" z="23.5" axis="0 1 0">
+  </xacro:create_joint>
+  <xacro:create_link index="7"/>
+
+  <joint name="link6_link7b_joint" type="revolute">
+    <parent link="link6"/>
+    <child link="link7b"/>
+    <origin xyz="${-20.97/1000} ${13.04/1000} ${34/1000}" rpy="0 0 ${PI}"/>
+    <axis xyz="0 1 0"/>
+    <limit
+      effort="40.0"
+      velocity="1.0"
+      lower="${-PI}"
+      upper="${PI}"/>
+    <mimic joint="link6_link7_joint" offset="${-PI*50/180}"/>
+  </joint>
+  <link name="link7b">
+    <visual>
+      <geometry>
+        <!-- the STL is exported from Fusion 360 in millimeters, while URDF expects it in meters.
+      Therefore, scaling is required. -->
+        <mesh scale="0.001 0.001 0.001" filename="package://mmm_description/meshes/link7.stl"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+    <!--
+    <collision>
+
+    </collision>
+
+    <inertial>
+
+    </inertial> -->
+  </link>
 
 
 </robot>

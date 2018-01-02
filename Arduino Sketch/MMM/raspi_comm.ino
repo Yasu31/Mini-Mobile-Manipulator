@@ -6,21 +6,38 @@ int bytes2Val(byte byteArray[]){
 }
 
 void receiveData(int byteCount){
-  if(byteCount<5){
-    return;
-  }
+
   byte receivedBytes[byteCount];
 
-  Serial.print("\n");
+  //Serial.print("\n");
   for(int i=0; Wire.available() ; i++){
     receivedBytes[i]=Wire.read();
-    Serial.print((String)receivedBytes[i]+"\t");
+    if (!noSerial){Serial.print((String)receivedBytes[i]+"\t");}
+  }
+  if(byteCount<5){
+    return;
   }
 
   int noun=bytes2Val(&receivedBytes[1]);
   int verb=bytes2Val(&receivedBytes[3]);
-  Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);
+  if (!noSerial){Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);}
+  
   // do actions based on noun-word pair
+  if(0<=noun && noun<NUM_SERVOS){
+//    noun=0~6 are commands to the servo
+    if(-13500<=verb && verb <=13500){
+        angleCommand[noun]=verb;
+      }
+  }
+  else if(10<=noun && noun<(10+NUM_SERVOS)){
+    // for example, when noun=13, verb=1, servo 3 is set to free.
+    if(verb==0){
+      freeServo[noun-10]=true;
+    }
+    else if(verb==1){
+      freeServo[noun-10]=false;
+    }
+  }
 }
 
 //get integer from -2^15 ~ 2^15, convert to 2 bytes
@@ -39,8 +56,7 @@ void sendData(){
 
 //   First 14(=NUM_SERVOS*2) bytes are servo position data.
   for(int i=0;i<NUM_SERVOS;i++){
-    int servo=-1000*i;//krs.posDeg100(krs.getPos(i)); //-13500~13500
-    val2Bytes(&bytesToSend[2*i], servo);
+    val2Bytes(&bytesToSend[2*i], angleSensor[i]);
   }
 
 //  Next 12(=6*2) bytes are IMU data
@@ -48,9 +64,9 @@ void sendData(){
 //    int IMU=123;
 //    val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
 //  }
-  Serial.print("\nsending data\n");
+  if (!noSerial){Serial.print("\nsending data\n");}
   for(int i=0; i<NUM_BYTES; i++){
-    Serial.print((String)bytesToSend[i]+"\t");
+    if (!noSerial){Serial.print((String)bytesToSend[i]+"\t");}
   }
   Wire.write(bytesToSend, NUM_BYTES);
 }
