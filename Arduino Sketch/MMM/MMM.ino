@@ -21,16 +21,29 @@ LSM9DS1 imu;
 
 float sensorPos[3]={0.0,0.0,0.0};
 float sensorOri[4]={0.0,0.0,0.0,0.0};
-float angleCommand[7]={0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+//in degrees*100
+int angleSensor[7]={0,0,0,0,0,0,0};
+bool freeServo[7]={true,true,true,true,true,true,true};
+//in degrees*100
+int angleCommand[7]={0,0,0,0,0,0,0};
+
+bool noSerial=true;
+const int enpin = 2;
+const long baudrate = 115200;
+const int timeout = 5;
+IcsClass krs(&Serial,enpin,baudrate,timeout);
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  if (!noSerial){Serial.begin(115200);}
   //initialize i2c as slave
   Wire.begin(SLAVE_ADDRESS);
   // define callbacks for i2c communication
   Wire.onReceive(receiveData);
   Wire.onRequest(sendData);
+
+  krs.begin();
+
 
 //  imu.settings.device.commInterface = IMU_MODE_I2C;
 //  imu.settings.device.mAddress = LSM9DS1_M;
@@ -54,6 +67,17 @@ void loop() {
   // put your main code here, to run repeatedly:
 //  readSensor();
 //  Serial.print("\nax\t"+String(acc[0])+"\tay\t"+String(acc[1])+"\taz\t"+String(acc[2]));
-  delay(1000);
+
+  // do processes that take some time inside the loop(), so that we can immediately return the servo angles in the i2c callback function
+  for(int i=0; i<NUM_SERVOS; i++){
+    if(freeServo[i]){
+      angleSensor[i]=krs.posDeg100(krs.setFree(i));
+    }
+    else{
+      angleSensor[i]=krs.posDeg100(krs.setPos(i,krs.degPos100(angleCommand[i])));
+    }
+  }
+  delay(1);
+  
 }
 
