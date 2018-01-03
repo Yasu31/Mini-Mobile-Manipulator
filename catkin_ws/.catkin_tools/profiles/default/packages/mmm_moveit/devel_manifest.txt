@@ -1,4 +1,4 @@
 mmm_moveit
-/home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/.private/mmm_moveit/share/mmm_moveit/cmake/mmm_moveitConfig-version.cmake /home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/share/mmm_moveit/cmake/mmm_moveitConfig-version.cmake
-/home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/.private/mmm_moveit/share/mmm_moveit/cmake/mmm_moveitConfig.cmake /home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/share/mmm_moveit/cmake/mmm_moveitConfig.cmake
-/home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/.private/mmm_moveit/lib/pkgconfig/mmm_moveit.pc /home/pi/GitHub/fantastic-octo-parakeet/catkin_ws/devel/lib/pkgconfig/mmm_moveit.pc
+/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_moveit/share/mmm_moveit/cmake/mmm_moveitConfig-version.cmake /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_moveit/cmake/mmm_moveitConfig-version.cmake
+/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_moveit/share/mmm_moveit/cmake/mmm_moveitConfig.cmake /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_moveit/cmake/mmm_moveitConfig.cmake
+/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_moveit/lib/pkgconfig/mmm_moveit.pc /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/mmm_moveit.pc

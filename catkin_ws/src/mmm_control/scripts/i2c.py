@@ -46,7 +46,7 @@ def readData():
         # So, we try to convert block[] to a list of integers.
         for i in range(int(NUM_BYTES/2)):
             intList.append(bytes2Int(block[i*2:i*2+2]))
-    print(intList)
+    #print(intList)
     return intList
 
 
