@@ -14,6 +14,14 @@
 #define NUM_SERVOS 7
 #define NUM_BYTES 14
 
+int R_PWM=9;
+int R_INA=10;
+int R_INB=11;
+
+int L_PWM=3;
+int L_INA=5;
+int L_INB=6;
+
 float gyr[3]={0.0,0.0,0.0};
 float acc[3]={0.0,0.0,0.0};
 float mag[3]={0.0,0.0,0.0};
@@ -43,6 +51,16 @@ void setup() {
   Wire.onRequest(sendData);
 
   krs.begin();
+
+  pinMode(R_PWM, OUTPUT);
+  pinMode(R_INA, OUTPUT);
+  pinMode(R_INB, OUTPUT);
+  
+  pinMode(L_PWM, OUTPUT);
+  pinMode(L_INA, OUTPUT);
+  pinMode(L_INB, OUTPUT);
+
+
 
 
 //  imu.settings.device.commInterface = IMU_MODE_I2C;

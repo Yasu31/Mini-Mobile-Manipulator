@@ -1,8 +1,17 @@
+#!/usr/bin/env python3
 import subprocess
-from threading import Thread
+import rospy
+from std_msgs.msg import Int32
+def playAudio(data):
+    i=data.data
+    if i<1 or i>22 or i==19:
+        return
+    subprocess.run(["omxplayer", "../audio/"+str(i)+".wav", "--vol", "800"])
 
-def myThread(i):
-    subprocess.run(["omxplayer", "../audio/"+str(i)+".mp3", "--vol", "800"], timeout=4)
-def playSound(i):
-    t=Thread(target=myThread, args=(i,))
-    t.start()
+rospy.init_node('listener', anonymous=True)
+rospy.Subscriber("audio", Int32, playAudio)
+rospy.spin()
+
+# pub=rospy.Publisher('audio', Int32, queue_size=10)
+# rospy.init_node('talker', anonymous=True)
+# pub.publish(2)

@@ -20,6 +20,7 @@ void receiveData(int byteCount){
 
   int noun=bytes2Val(&receivedBytes[1]);
   int verb=bytes2Val(&receivedBytes[3]);
+  
   if (!noSerial){Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);}
   
   // do actions based on noun-word pair
@@ -36,6 +37,36 @@ void receiveData(int byteCount){
     }
     else if(verb==1){
       freeServo[noun-10]=false;
+    }
+  }
+  else if(20<=noun && noun<22){
+    //    20 is command to right motor, 21 is to left. From -255~255
+    int pwmPin, inA, inB;
+    
+    if(noun==20){
+      pwmPin=R_PWM;
+      inA=R_INA;
+      inB=R_INB;
+    }
+    else{
+      pwmPin=L_PWM;
+      inA=L_INA;
+      inB=L_INB;
+    }
+    
+    if (verb>0){
+      analogWrite(pwmPin, constrain(verb, 0, 255));
+      digitalWrite(inA, HIGH);
+      digitalWrite(inB, LOW);
+    }
+    else if (verb<0){
+      analogWrite(pwmPin, constrain(-verb, 0, 255));
+      digitalWrite(inA, LOW);
+      digitalWrite(inB, HIGH);
+    }
+    else{
+      digitalWrite(inA, LOW);
+      digitalWrite(inB, LOW);
     }
   }
 }
