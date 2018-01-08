@@ -2,6 +2,7 @@
 import subprocess
 import rospy
 from std_msgs.msg import Int32
+# this is used to ensure that omxplayer isn't called multiple times while it's running. It seems to work.
 playing=False
 
 def playAudio(data):
