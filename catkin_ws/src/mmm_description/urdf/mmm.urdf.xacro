@@ -114,6 +114,8 @@
   </xacro:create_joint>
   <xacro:create_link index="7"/>
 
+
+
   <joint name="link6_link7b_joint" type="revolute">
     <parent link="link6"/>
     <child link="link7b"/>
@@ -142,6 +144,30 @@
 
     <inertial>
 
+    </inertial> -->
+  </link>
+
+  <joint name="link7b_camera_joint" type="fixed">
+    <parent link="link7b"/>
+    <child link="camera"/>
+    <origin xyz="${21/1000} ${14.93/1000} ${13.9/1000}" rpy="0 ${25*PI/180} 0"/>
+  </joint>
+
+  <link name="camera">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- the STL is exported from Fusion 360 in millimeters, while URDF expects it in meters.
+      Therefore, scaling is required. -->
+        <mesh scale="0.001 0.001 0.001" filename="package://mmm_description/meshes/camera.stl"/>
+      </geometry>
+      <material name="brown"/>
+    </visual>
+    <!--
+    <collision>
+    </collision>
+
+    <inertial>
     </inertial> -->
   </link>
 
