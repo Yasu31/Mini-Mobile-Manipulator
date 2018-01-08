@@ -2,11 +2,16 @@
 import subprocess
 import rospy
 from std_msgs.msg import Int32
+playing=False
+
 def playAudio(data):
+    global playing
     i=data.data
-    if i<1 or i>22 or i==19:
+    if i<1 or i>22 or i==19 or playing:
         return
-    subprocess.run(["omxplayer", "../audio/"+str(i)+".wav", "--vol", "800"])
+    playing=True
+    subprocess.call(["omxplayer","../audio/"+str(i)+".wav","--vol","800"])
+    playing=False
 
 rospy.init_node('listener', anonymous=True)
 rospy.Subscriber("audio", Int32, playAudio)
