@@ -3,6 +3,8 @@ import subprocess
 import rospy
 from std_msgs.msg import Int32
 playing=False
+import rospkg
+rospack=rospkg.RosPack()
 
 def playAudio(data):
     global playing
@@ -10,7 +12,7 @@ def playAudio(data):
     if i<1 or i>22 or i==19 or playing:
         return
     playing=True
-    subprocess.call(["omxplayer","../audio/"+str(i)+".wav","--vol","800"])
+    subprocess.call(["omxplayer",rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav","--vol","800"])
     playing=False
 
 rospy.init_node('listener', anonymous=True)
