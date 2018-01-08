@@ -2,10 +2,11 @@
 # pip3 install pyYAML
 # pip3 install rospkg
 # pip3 install catkin_pkg
-import i2c
 import rospy
-import audio
+import rospkg
 from sensor_msgs.msg import JointState
+import i2c
+
 corrections=[-1,1,-1,1,-1,-1,1]
 def publishSensors():
     pub=rospy.Publisher('joint_states', JointState, queue_size=10)
