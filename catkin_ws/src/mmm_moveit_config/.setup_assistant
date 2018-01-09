@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: mmm_description
+    relative_path: urdf/mmm.urdf.xacro
+  SRDF:
+    relative_path: config/mmm.srdf
+  CONFIG:
+    author_name: Yasunori Toshimitsu
+    author_email: yasu313nori@gmail.com
+    generated_timestamp: 1515428213
