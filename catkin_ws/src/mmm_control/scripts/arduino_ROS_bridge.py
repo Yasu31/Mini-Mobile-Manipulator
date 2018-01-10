@@ -6,7 +6,8 @@ import rospy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Int32
 from control_msgs.msg import FollowJointTrajectoryActionGoal
-# from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
+from geometry_msgs.msg import Twist
+
 
 #RPi Pinouts
 #I2C Pins
@@ -20,6 +21,13 @@ from smbus import SMBus
 import time
 import struct
 
+# Whether the servos already have had been sent commands to the joints
+firstReceive=[True]*6
+
+# last time that a Twist message was received.
+lastTwist=time.time()
+
+
 # number of bytes we receive from Arduino
 NUM_BYTES=14
 
@@ -28,6 +36,7 @@ NUM_BYTES=14
 address = 0x04
 
 bus=SMBus(1)
+audioPub=rospy.Publisher('audio', Int32, queue_size=10)
 
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
@@ -64,19 +73,18 @@ corrections=[-1,1,-1,1,-1,-1,1]
 def publishSensors():
     pub=rospy.Publisher('joint_states', JointState, queue_size=10)
 
-    audioPub=rospy.Publisher('audio', Int32, queue_size=10)
+
 
     # I only need to do this once, and only once, in the code
     #rospy.init_node('joint_state_publisher_a', anonymous=True)
     rate=rospy.Rate(10)
     jointState=JointState()
     time.sleep(1)
-    audioPub.publish(2)
+    global audioPub, lastTwist
+    audioPub.publish(6)
     sensorInfos=None
 
-    # activate all joints
-    for i in range(7):
-        writeData(i+10, 1)
+
     while not rospy.is_shutdown():
         try:
             sensorInfos=readData()
@@ -94,10 +102,22 @@ def publishSensors():
             jointState.velocity=[]
             jointState.effort=[]
             pub.publish(jointState)
+            if time.time()-lastTwist>0.3:
+                writeData(20,0)
+                writeData(21,0)
         except:
             print("error received... moving on")
-
+            audioPub.publish(13)
         rate.sleep()
+    # set servos to free
+    audioPub.publish(10)
+    writeData(20,0)
+    writeData(21,0)
+    for i in range(7):
+        try:
+            writeData(i+10, 0)
+        except:
+            pass
 
 def sendJointCallback(data):
     # output joint angles to robot...
@@ -107,6 +127,9 @@ def sendJointCallback(data):
     radian=0
     numOfPoints=len(data.goal.trajectory.points)
     print("received "+str(numOfPoints)+" points")
+    global firstReceive, audioPub
+    if firstReceive[0]==False:
+        audioPub.publish(17)
     for i in range(numOfPoints):
         # send all joint angles to Arduino
         # encoded in data.trajectory.points[0~6][i] and data.trajectory.joint_names[0~6]
@@ -118,15 +141,27 @@ def sendJointCallback(data):
             print(str(radian)+"\t"+str(deg)+"\t"+str(data.goal.trajectory.points[i].time_from_start))
             try:
                 writeData(j, deg)
+                if firstReceive[j]:
+                    # activate joint at first joint command
+                    writeData(j+10,1)
+                    firstReceive[j]=False
+                    if j==0:
+                        audioPub.publish(22)
             except:
                 print("oops, failed to send joint data but it's okay")
         rospy.sleep(0.02)
 
+def twistCallback(data):
+    writeData(20,int(100*(data.linear.x+data.angular.z)))
+    writeData(21,int(100*(data.linear.x-data.angular.z)))
+    global lastTwist
+    lastTwist=time.time()
 
 if __name__ == '__main__':
     try:
         rospy.init_node('node', anonymous=True)
         rospy.Subscriber("/joint_trajectory_action/goal", FollowJointTrajectoryActionGoal, sendJointCallback)
+        rospy.Subscriber("/turtle1/cmd_vel", Twist,twistCallback)
         publishSensors()
     except rospy.ROSInterruptException:
         pass
