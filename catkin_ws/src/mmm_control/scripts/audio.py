@@ -14,7 +14,6 @@ def playAudio(data):
     if i<1 or i>22 or i==19 or playing:
         return
     playing=True
-    # subprocess.Popen(["omxplayer",rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav","--vol","800"])
     os.system("omxplayer "+rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav -o local --vol 800")
     playing=False
 

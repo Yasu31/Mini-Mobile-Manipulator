@@ -1,2 +1,4 @@
 .idea
 cmake-build-debug
+rviz/
+rviz_visual_tools/
