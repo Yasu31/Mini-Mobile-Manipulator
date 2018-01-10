@@ -18,11 +18,15 @@
         </geometry>
         <material name="gray"/>
       </visual>
-      <!--
+
       <collision>
-
+      <geometry>
+        <!-- the STL is exported from Fusion 360 in millimeters, while URDF expects it in meters.
+      Therefore, scaling is required. -->
+        <mesh scale="0.001 0.001 0.001" filename="package://mmm_description/meshes/Slink${index}.stl"/>
+      </geometry>
       </collision>
-
+<!--
       <inertial>
 
       </inertial> -->
@@ -31,7 +35,7 @@
 
   <!-- creates a link between link {index-1} and {index} -->
   <!-- input distances in millimeters. -->
-  <xacro:macro name="create_joint" params="index x:=0 y:=0 z:=0 axis">
+  <xacro:macro name="create_joint" params="index x:=0 y:=0 z:=0 axis angle">
     <joint name="link${index-1}_link${index}_joint" type="revolute">
       <parent link="link${index-1}"/>
       <child link="link${index}"/>
@@ -40,8 +44,8 @@
       <limit
         effort="40.0"
         velocity="1.0"
-        lower="${-PI}"
-        upper="${PI}"/>
+        lower="${-angle*PI/180}"
+        upper="${angle*PI/180}"/>
     </joint>
   </xacro:macro>
 
@@ -75,11 +79,17 @@
       </geometry>
       <material name="brown"/>
     </visual>
-    <!--
+
     <collision>
+      <geometry>
+
+        <!-- the STL is exported from Fusion 360 in millimeters, while URDF expects it in meters.
+      Therefore, scaling is required. -->
+        <mesh scale="0.001 0.001 0.001" filename="package://mmm_description/meshes/Sbase.stl"/>
+      </geometry>
     </collision>
 
-    <inertial>
+    <!-- <inertial>
     </inertial> -->
   </link>
 
@@ -91,26 +101,34 @@
   <xacro:create_link index="0"/>
 
 
-  <xacro:create_joint index="1" z="31" axis="0 0 1"/>
+  <xacro:create_joint index="1" z="31" axis="0 0 1" angle="120"/>
   <xacro:create_link index="1"/>
 
 
-  <xacro:create_joint index="2" y="15.46" z="20.25" axis="0 1 0"/>
+  <xacro:create_joint index="2" y="15.46" z="20.25" axis="0 1 0" angle="60"/>
   <xacro:create_link index="2"/>
 
-  <xacro:create_joint index="3" z="48" axis="0 1 0"/>
+  <xacro:create_joint index="3" z="48" axis="0 1 0" angle="60"/>
   <xacro:create_link index="3"/>
 
-  <xacro:create_joint index="4" x="13.72" y="-15.5" z="53.22" axis="1 0 0"/>
+  <xacro:create_joint index="4" x="13.72" y="-15.5" z="53.22" axis="1 0 0" angle="90"/>
   <xacro:create_link index="4"/>
 
-  <xacro:create_joint index="5" x="-15.8" y="-15.9" z="40" axis="0 1 0"/>
+  <xacro:create_joint index="5" x="-15.8" y="-15.9" z="40" axis="0 1 0" angle="90"/>
   <xacro:create_link index="5"/>
 
-  <xacro:create_joint index="6" y="13.9" z="69.5" axis="0 0 1"/>
+  <xacro:create_joint index="6" y="13.9" z="69.5" axis="0 0 1" angle="135"/>
   <xacro:create_link index="6"/>
 
-  <xacro:create_joint index="7" y="-13.9" z="23.5" axis="0 1 0">
+  <joint name="link6_gripper_frame_joint" type="fixed">
+    <parent link="link6" />
+    <child link="gripper_frame"/>
+    <origin xyz="0 0 ${50/1000}"/>
+  </joint>
+  <link name="gripper_frame">
+  </link>
+
+  <xacro:create_joint index="7" y="-13.9" z="23.5" axis="0 1 0" angle="20">
   </xacro:create_joint>
   <xacro:create_link index="7"/>
 
@@ -137,12 +155,17 @@
       </geometry>
       <material name="gray"/>
     </visual>
-    <!--
+
     <collision>
+      <geometry>
+        <!-- the STL is exported from Fusion 360 in millimeters, while URDF expects it in meters.
+      Therefore, scaling is required. -->
+        <mesh scale="0.001 0.001 0.001" filename="package://mmm_description/meshes/Slink7.stl"/>
+      </geometry>
 
     </collision>
 
-    <inertial>
+    <!-- <inertial>
 
     </inertial> -->
   </link>
