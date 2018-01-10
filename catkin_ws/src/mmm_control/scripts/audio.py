@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import subprocess
+# import subprocess
+import os
 import rospy
 from std_msgs.msg import Int32
 # this is used to ensure that omxplayer isn't called multiple times while it's running. It seems to work.
@@ -13,7 +14,8 @@ def playAudio(data):
     if i<1 or i>22 or i==19 or playing:
         return
     playing=True
-    subprocess.call(["omxplayer",rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav","--vol","800"])
+    # subprocess.Popen(["omxplayer",rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav","--vol","800"])
+    os.system("omxplayer "+rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav -o local --vol 800")
     playing=False
 
 rospy.init_node('listener', anonymous=True)

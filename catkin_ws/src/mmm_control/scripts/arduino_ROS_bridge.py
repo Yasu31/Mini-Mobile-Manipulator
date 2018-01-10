@@ -4,7 +4,10 @@
 # pip3 install catkin_pkg
 import rospy
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Int32, Float64
+from std_msgs.msg import Int32
+from control_msgs.msg import FollowJointTrajectoryActionGoal
+# from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
+
 #RPi Pinouts
 #I2C Pins
 #GPIO2 -> SDA
@@ -62,42 +65,68 @@ def publishSensors():
     pub=rospy.Publisher('joint_states', JointState, queue_size=10)
 
     audioPub=rospy.Publisher('audio', Int32, queue_size=10)
-    audioPub.init_node('talker', anonymous=True)
 
-    rospy.init_node('joint_state_publisher_a', anonymous=True)
+    # I only need to do this once, and only once, in the code
+    #rospy.init_node('joint_state_publisher_a', anonymous=True)
     rate=rospy.Rate(10)
     jointState=JointState()
     time.sleep(1)
     audioPub.publish(2)
+    sensorInfos=None
+
+    # activate all joints
+    for i in range(7):
+        writeData(i+10, 1)
     while not rospy.is_shutdown():
         try:
             sensorInfos=readData()
             for i in range(len(sensorInfos)):
                 sensorInfos[i]*=corrections[i]
+            jointNames=[]
+            for i in range(7):
+                jointNames.append("link"+str(i)+"_link"+str(i+1)+"_joint")
+            jointState.header.stamp=rospy.Time.now()
+            jointState.name=jointNames
+            # angles are in degrees*100. Convert to radians
+
+            jointState.position=[i/100*3.1415/180 for i in sensorInfos]
+
+            jointState.velocity=[]
+            jointState.effort=[]
+            pub.publish(jointState)
         except:
             print("error received... moving on")
-        jointNames=[]
-        for i in range(7):
-            jointNames.append("link"+str(i)+"_link"+str(i+1)+"_joint")
-        jointState.header.stamp=rospy.Time.now()
-        jointState.name=jointNames
-        # angles are in degrees*100. Convert to radians
 
-        jointState.position=[i/100*3.1415/180 for i in sensorInfos]
-
-        jointState.velocity=[]
-        jointState.effort=[]
-        pub.publish(jointState)
         rate.sleep()
 
-def callback(data):
-    # output stuff to robot...
-    pass
+def sendJointCallback(data):
+    # output joint angles to robot...
+    # "data" is a FollowJointTrajectory ros topic
+    # http://docs.ros.org/jade/api/control_msgs/html/action/FollowJointTrajectory.html
+    print("received joint positions")
+    radian=0
+    numOfPoints=len(data.goal.trajectory.points)
+    print("received "+str(numOfPoints)+" points")
+    for i in range(numOfPoints):
+        # send all joint angles to Arduino
+        # encoded in data.trajectory.points[0~6][i] and data.trajectory.joint_names[0~6]
+        print("_________point_________")
+        for j in range(6):
+            # TRUST that MoveIt sends joint angles in order
+            radian=data.goal.trajectory.points[i].positions[j]
+            deg=int(radian*180.0/3.14*100.0)*corrections[j]
+            print(str(radian)+"\t"+str(deg)+"\t"+str(data.goal.trajectory.points[i].time_from_start))
+            try:
+                writeData(j, deg)
+            except:
+                print("oops, failed to send joint data but it's okay")
+        rospy.sleep(0.02)
+
 
 if __name__ == '__main__':
     try:
         rospy.init_node('node', anonymous=True)
-        rospy.Subscriber("??", Float64, callback)
+        rospy.Subscriber("/joint_trajectory_action/goal", FollowJointTrajectoryActionGoal, sendJointCallback)
         publishSensors()
     except rospy.ROSInterruptException:
         pass
