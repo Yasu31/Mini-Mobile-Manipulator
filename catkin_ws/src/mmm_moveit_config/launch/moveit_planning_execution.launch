@@ -3,14 +3,19 @@
   <!--
   Based on motoman project
   起動計画をFollowJointTrajectoryでpublishするようにlaunch
-  MoveitのGUI(Rviz)をlaunch -->
+  MoveitのGUI(Rviz)をlaunch
+  and also http://wiki.ros.org/Industrial/Tutorials/Create_a_MoveIt_Pkg_for_an_Industrial_Robot?action=AttachFile&do=view&target=moveit_planning_execution.launch.txt-->
   <!-- By default, we do not start a database (it can be large) -->
-  <arg name="db" default="false" />
-  <!-- Allow user to specify database location -->
-  <arg name="db_path" default="$(find mmm_moveit_config)/default_warehouse_mongo_db" />
+
+  <rosparam command="load" file="$(find mmm_moveit_config)/config/joint_names.yaml"/>
 
   <!-- By default, we are not in debug mode -->
+  <!-- By default, we are not in sim mode -->
   <arg name="debug" default="false" />
+  <arg name="sim" value="false" />
+
+  <!-- put in IP address of Raspberry Pi -->
+  <arg name="robot_ip" value="192.168.97.215" />
 
 
   <!-- controllers_config is loaded inside mmm_moveit_config -->
@@ -20,11 +25,31 @@
     <arg name="load_robot_description" value="true"/>
   </include>
 
-  <!-- If needed, broadcast static tf for robot root -->
+
+  <!-- run the "real robot" interface nodes -->
+  <!--   - this typically includes: robot_state, motion_interface, and joint_trajectory_action nodes -->
+  <!--   - replace these calls with appropriate robot-specific calls or launch files -->
+  <!-- <group unless="$(arg sim)"> -->
+    <!-- <include file="$(find [robot_interface_pkg])/launch/robot_interface.launch" >
+      <arg name="robot_ip" value="$(arg robot_ip)"/>
+    </include> -->
+    <!-- <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action"/> -->
+
+    <!-- <include file="$(find industrial_robot_client)/launch/robot_interface_streaming.launch">
+      <arg name="robot_ip" value="$(arg robot_ip)"/>
+
+    </include> -->
 
 
+  <!-- </group> -->
+
+  <!-- I'm not really entirely sure, but an "action server" is required to be running, for moveit to be able to be used with a real robot -->
+  <node name="action_server" pkg="mmm_actionlib" type="action_server" respawn="true"/>
+
+
+  <!-- This should already have been launched on the Pi -->
   <!-- Given the published joint states, publish tf for the robot links -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /> -->
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find mmm_moveit_config)/launch/move_group.launch">
@@ -39,6 +64,12 @@
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
+
+
+  <!-- By default, we do not start a database (it can be large) -->
+  <arg name="db" default="false" />
+  <!-- Allow user to specify database location -->
+  <arg name="db_path" default="$(find mmm_moveit_config)/default_warehouse_mongo_db" />
 
   <!-- If database loading was enabled, start mongodb as well -->
   <include file="$(find mmm_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
