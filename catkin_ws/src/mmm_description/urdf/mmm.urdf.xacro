@@ -172,11 +172,11 @@
 
   <joint name="link7b_camera_joint" type="fixed">
     <parent link="link7b"/>
-    <child link="camera"/>
+    <child link="raspicam"/>
     <origin xyz="${21/1000} ${14.93/1000} ${13.9/1000}" rpy="0 ${25*PI/180} 0"/>
   </joint>
 
-  <link name="camera">
+  <link name="raspicam">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
