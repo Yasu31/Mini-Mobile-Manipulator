@@ -1,0 +1,17 @@
+<launch>
+  <!-- make sure you're running the image_transport, which converts the compressed image from raspi camera to raw. -->
+  <!-- $rosrun image_transport republish compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw -->
+
+  <!-- run this on the robot, for faster processing -->
+
+  <!-- start tracking AR markers -->
+  <include file="$(find mmm_control)/launch/ar_track.launch">
+    <arg name="marker_size" value="3"/>
+  </include>
+
+  <!-- create the frame that corresponds to the hand of the KXR robot -->
+  <node name="kxr_hand_broadcaster" pkg="mmm_behaviour" type="kxr_hand.py"/>
+
+
+
+</launch>
