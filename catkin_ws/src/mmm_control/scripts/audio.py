@@ -18,7 +18,7 @@ def playAudio(data):
     playing=False
 
 rospy.init_node('listener', anonymous=True)
-rospy.Subscriber("audio", Int32, playAudio)
+rospy.Subscriber("audio", Int32, playAudio, queue_size=3)
 rospy.spin()
 
 # pub=rospy.Publisher('audio', Int32, queue_size=10)
