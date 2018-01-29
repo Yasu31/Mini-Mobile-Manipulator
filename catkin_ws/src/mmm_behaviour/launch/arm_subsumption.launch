@@ -1,0 +1,34 @@
+<launch>
+  <!-- launch the subsumption architecture for the arm. Subscribes to several topics, then chooses which one to use. -->
+
+
+
+  <!-- launch python script too -->
+
+  <!--~~~~The rest is taken from the MoveIt launch file~~~~-->
+  <rosparam command="load" file="$(find mmm_moveit_config)/config/joint_names.yaml"/>
+  <arg name="debug" default="false" />
+  <arg name="sim" value="false" />
+
+  <!-- put in IP address of Raspberry Pi -->
+  <arg name="robot_ip" value="192.168.3.19" />
+  <include file="$(find mmm_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+  <node name="action_server" pkg="mmm_actionlib" type="action_server" respawn="true"/>
+  <include file="$(find mmm_moveit_config)/launch/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+  <!-- By default, we do not start a database (it can be large) -->
+  <arg name="db" default="false" />
+  <!-- Allow user to specify database location -->
+  <arg name="db_path" default="$(find mmm_moveit_config)/default_warehouse_mongo_db" />
+
+  <!-- If database loading was enabled, start mongodb as well -->
+  <include file="$(find mmm_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
+    <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
+  </include>
+</launch>

@@ -15,7 +15,9 @@
   <arg name="sim" value="false" />
 
   <!-- put in IP address of Raspberry Pi -->
-  <arg name="robot_ip" value="192.168.97.215" />
+  <arg name="robot_ip" value="192.168.3.19" />
+  <!-- for MyPlace, robot_ip is 192.168.10.240 -->
+  <!-- for YTiPhone, robot_ip is 172.20.10.2 -->
 
 
   <!-- controllers_config is loaded inside mmm_moveit_config -->

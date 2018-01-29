@@ -1,5 +1,9 @@
 <launch>
   <!-- based on https://github.com/sniekum/ar_track_alvar/blob/indigo-devel/launch/pr2_indiv_no_kinect.launch -->
+
+  <!-- make sure you're running the image_transport, which converts the compressed image from raspi camera to raw. -->
+  <!-- $rosrun image_transport republish compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw -->
+  
   <arg name="marker_size" default="4.4" />
   <arg name="max_new_marker_error" default="0.08" />
   <arg name="max_track_error" default="0.2" />

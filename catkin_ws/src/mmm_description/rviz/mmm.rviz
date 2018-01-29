@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 467
   - Class: rviz/Selection
@@ -69,6 +70,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        gripper_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         link0:
           Alpha: 1
           Show Axes: false
@@ -114,12 +119,87 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        raspicam:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base:
+          Value: true
+        camera:
+          Value: true
+        gripper_frame:
+          Value: true
+        link0:
+          Value: true
+        link1:
+          Value: true
+        link2:
+          Value: true
+        link3:
+          Value: true
+        link4:
+          Value: true
+        link5:
+          Value: true
+        link6:
+          Value: true
+        link7:
+          Value: true
+        link7b:
+          Value: true
+        raspicam:
+          Value: true
+        world:
+          Value: true
+      Marker Scale: 0.100000001
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          base:
+            link0:
+              link1:
+                link2:
+                  link3:
+                    link4:
+                      link5:
+                        link6:
+                          gripper_frame:
+                            {}
+                          link7:
+                            {}
+                          link7b:
+                            camera:
+                              {}
+                            raspicam:
+                              {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -145,7 +225,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.395763814
+      Distance: 0.769918799
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -160,10 +240,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.67539829
+      Pitch: 0.595398426
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.510398269
+      Yaw: 0.0103974957
     Saved: ~
 Window Geometry:
   Displays:
