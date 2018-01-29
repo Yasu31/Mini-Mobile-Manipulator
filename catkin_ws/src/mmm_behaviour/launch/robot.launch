@@ -2,7 +2,9 @@
   <!-- make sure you're running the image_transport, which converts the compressed image from raspi camera to raw. -->
   <!-- $rosrun image_transport republish compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw -->
 
-  <!-- run this on the robot, for faster processing -->
+  <include file="$(find mmm_control)/launch/robot.launch"/>
+
+  <node name="converter" pkg="image_transport" type="republish" args="compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw" respawn="true"/>
 
   <!-- start tracking AR markers -->
   <include file="$(find mmm_control)/launch/ar_track.launch">

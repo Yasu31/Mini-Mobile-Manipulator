@@ -198,7 +198,7 @@
   <joint name="camera_raspicam_joint" type="fixed">
     <parent link="camera"/>
     <child link="raspicam"/>
-    <origin xyz="0 0 0" rpy="0 ${-PI/2} 0"/>
+    <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}"/>
   </joint>
 
 
