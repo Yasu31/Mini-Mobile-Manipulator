@@ -101,7 +101,7 @@
   <xacro:create_link index="0"/>
 
 
-  <xacro:create_joint index="1" z="31" axis="0 0 1" angle="120"/>
+  <xacro:create_joint index="1" z="31" axis="0 0 1" angle="135"/>
   <xacro:create_link index="1"/>
 
 
