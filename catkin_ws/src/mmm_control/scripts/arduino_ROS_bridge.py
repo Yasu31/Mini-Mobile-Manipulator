@@ -4,7 +4,7 @@
 # pip3 install catkin_pkg
 import rospy
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Float32
 from control_msgs.msg import FollowJointTrajectoryActionGoal
 from geometry_msgs.msg import Twist
 
@@ -157,11 +157,17 @@ def twistCallback(data):
     global lastTwist
     lastTwist=time.time()
 
+def joint0Callback(msg):
+    # for directly manipulating joint0 to follow target
+    writeData(0, int(msg.data*180.0/3.14*100.0)*corrections[0])
+    return
+
 if __name__ == '__main__':
     try:
         rospy.init_node('node', anonymous=True)
         rospy.Subscriber("/joint_trajectory_action/goal", FollowJointTrajectoryActionGoal, sendJointCallback)
         rospy.Subscriber("/turtle1/cmd_vel", Twist,twistCallback)
+        rospy.Subscriber("/joint0", Float32, joint0Callback )
         publishSensors()
     except rospy.ROSInterruptException:
         pass
