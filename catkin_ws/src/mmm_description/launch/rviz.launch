@@ -5,9 +5,9 @@
     <include file="$(find mmm_description)/launch/description.launch"/>
 
     <!-- Joint state publisher opens a GUI to manually input joint states -->
-    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="use_gui" value="true"/>
-    </node> -->
+    </node>
 
     <!-- Robot state publisher subscribe to joint states and publish "tf" transforms -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
