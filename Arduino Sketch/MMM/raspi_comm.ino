@@ -31,7 +31,7 @@ void receiveData(int byteCount){
       }
   }
   else if(10<=noun && noun<(10+NUM_SERVOS)){
-    // for example, when noun=13, verb=1, servo 3 is set to free.
+    // for example, when noun=13, verb=1, servo 3 is set to actuated.
     if(verb==0){
       freeServo[noun-10]=true;
     }
