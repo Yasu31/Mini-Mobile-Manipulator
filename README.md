@@ -5,10 +5,14 @@ storage for Individual Projects(自主プロ) at UTokyo
 
 ## demo
 general run-through of robot
-[![](https://github.com/Yasu31/fantastic-octo-parakeet/blob/master/img/video1.png)](https://www.youtube.com/watch?v=AJrDMAA22wg)
+[![](img/video1.png)](https://www.youtube.com/watch?v=AJrDMAA22wg)
 
 pick up trash(kind of)
-[![](https://github.com/Yasu31/fantastic-octo-parakeet/blob/master/img/video2.png)](https://www.youtube.com/watch?v=ZHt5yPhyLIU)
+[![](img/video2.png)](https://www.youtube.com/watch?v=ZHt5yPhyLIU)
+
+## documents
+### final report for school project(Japanese)
+[![report_image](img/report.png)](/project_submissions/mmm_jishupro_report.pdf)
 
 ## To move the robot(as of Jan.10)
 * make sure to be on the same network as robot(NOT eduroam)
