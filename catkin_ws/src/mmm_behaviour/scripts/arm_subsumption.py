@@ -53,7 +53,7 @@ def targetGrabbable():
         global tfListener, markerLastReceived
         try:
             (trans, rot)=tfListener.lookupTransform("/base", "/kxr_hand",rospy.Time(0))
-            if(trans[0]**2+trans[1]**2<0.5**2):
+            if(trans[0]**2+trans[1]**2<0.2**2):
                 return True
         except:
             return False
@@ -99,7 +99,7 @@ def look():
         return
 
 def lookAround():
-    global pub, joint0_current ,rotation
+    global pub, joint0_current ,rotation, pubHand, hand_current
     joint0goal=joint0_current+rotation*0.06
     if(joint0goal>joint0_max-0.3):
         rotation=-1
@@ -108,11 +108,40 @@ def lookAround():
         rotation=1
         joint0goal=-joint0_max+0.3
     pub.publish(joint0goal)
+    if(hand_current>-0.39):
+        pubHand.publish(100)
+        pubHand.publish(-0.41)
+        pubHand.publish(-100)
+
+averageHandChange=1.0
+previousHand=0.0
+def noMovement():
+    global averageHandChange, previousHand, hand_current
+    averageHandChange=abs(hand_current-previousHand)+averageHandChange*0.5
+    previousHand=hand_current
+    print("averageHandChange is "+str(averageHandChange))
+    if(averageHandChange<0.0005):
+        return True
+    return False
+
+def pickGround():
+    global joint0_current, pub, pubHand, rotation, hand_current,averageHandChange
+    pubHand.publish(100)
+    pubHand.publish(0.2)
+    rospy.sleep(1.0)
+    pub.publish(joint0_current+rotation*0.5)
+    for i in range(20):
+        pubHand.publish(hand_current-0.1)
+        rospy.sleep(0.1)
+    averageHandChange=1.0
 
 def setLookForward():
     global arm_group
     arm_group.set_named_target("look_front")
     arm_group.go(wait=True)
+    pubHand.publish(100)
+    pubHand.publish(-0.4)
+    pubHand.publish(-100)
 
 def jointCB(msg):
     global joint0_current, hand_current
@@ -145,8 +174,8 @@ def place():
     rospy.sleep(1)
     pubHand.publish(0.1)
     rospy.sleep(1)
-    pubHand.publish(-0.33)
-    pubHand.publish(-0.33)
+    pubHand.publish(-0.4)
+    pubHand.publish(-0.4)
     setLookForward()
     setLookForward()
     pubHand.publish(-100)
@@ -188,6 +217,9 @@ if __name__=='__main__':
         elif(targetRecognized()):
             print("target is recognized")
             look()
+        elif(noMovement()):
+            print("no movement detected")
+            #pickGround()
         else:
             print("nuthin'.")
             lookAround()

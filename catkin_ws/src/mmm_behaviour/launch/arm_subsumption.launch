@@ -21,5 +21,6 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
+  <include file="$(find mmm_description)/launch/description.launch"/>
   <node name="rviz" pkg="rviz" type="rviz"/>
 </launch>

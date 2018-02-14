@@ -10,3 +10,5 @@ To run(as of Jan.10),
 * `roslaunch mmm_moveit_config moveit_planning_execution.launch` which starts MoveIt and RVIZ.
 
 ![](https://github.com/Yasu31/fantastic-octo-parakeet/blob/master/img/model.jpg)
+
+careful- the MMM currently sources the  setup file  for the ice-cream catkin_ws!
