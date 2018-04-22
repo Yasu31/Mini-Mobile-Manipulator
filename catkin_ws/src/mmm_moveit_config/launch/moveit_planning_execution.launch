@@ -46,7 +46,7 @@
   <!-- </group> -->
 
   <!-- I'm not really entirely sure, but an "action server" is required to be running, for moveit to be able to be used with a real robot -->
-  <node name="action_server" pkg="mmm_actionlib" type="action_server" respawn="true"/>
+  <node name="action_server" pkg="mmm_control" type="action_server.py" respawn="true"/>
 
 
   <!-- This should already have been launched on the Pi -->

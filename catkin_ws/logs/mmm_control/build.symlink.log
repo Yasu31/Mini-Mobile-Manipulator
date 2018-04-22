@@ -1,3 +1,3 @@
-Linked: (/home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_control/share/mmm_control/cmake/mmm_controlConfig-version.cmake, /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_control/cmake/mmm_controlConfig-version.cmake)
-Linked: (/home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_control/share/mmm_control/cmake/mmm_controlConfig.cmake, /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_control/cmake/mmm_controlConfig.cmake)
-Linked: (/home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/mmm_control/lib/pkgconfig/mmm_control.pc, /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/mmm_control.pc)
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/mmm_control.pc
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_control/cmake/mmm_controlConfig-version.cmake
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/mmm_control/cmake/mmm_controlConfig.cmake
