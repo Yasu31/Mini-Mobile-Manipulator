@@ -63,9 +63,13 @@ def readData():
     intList = []
     global bus
     try:
-        block = bus.read_i2c_block_data(address, 0, NUM_BYTES)
+        block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
+        print("check digit:"+str(block[NUM_BYTES-1]))
+        print("actual sum:"+str(sum(block[0:NUM_BYTES-1])%255))
         if block[NUM_BYTES-1] != (sum(block[0:NUM_BYTES-1])) % 255:
             print("Check digit not consistent.")
+            # print("check digit:"+str(block[NUM_BYTES-1]))
+            # print("actual sum:"+str(sum(block[0:NUM_BYTES-1])%255))
             raise Exception
         # print(block)
         # block[0~1] make up a two-byte integer, with twos complement.
