@@ -14,15 +14,21 @@ void receiveData(int byteCount){
     receivedBytes[i]=Wire.read();
     if (!noSerial){Serial.print((String)receivedBytes[i]+"\t");}
   }
-  if(byteCount<5){
+
+  // do digit check
+  byte sum = 0;
+  for (int i=0; i<byteCount-1; i++){
+    sum += receivedBytes[i]
+  }
+  if (receivedBytes[byteCount-1] != sum){
     return;
   }
 
   int noun=bytes2Val(&receivedBytes[1]);
   int verb=bytes2Val(&receivedBytes[3]);
-  
+
   if (!noSerial){Serial.print("\nnoun\t"+(String)noun+"\tverb\t"+(String)verb);}
-  
+
   // do actions based on noun-word pair
   if(0<=noun && noun<NUM_SERVOS){
 //    noun=0~6 are commands to the servo
@@ -42,7 +48,7 @@ void receiveData(int byteCount){
   else if(20<=noun && noun<22){
     //    20 is command to right motor, 21 is to left. From -255~255
     int pwmPin, inA, inB;
-    
+
     if(noun==20){
       pwmPin=R_PWM;
       inA=R_INA;
@@ -53,7 +59,7 @@ void receiveData(int byteCount){
       inA=L_INA;
       inB=L_INB;
     }
-    
+
     if (verb>0){
       analogWrite(pwmPin, constrain(verb, 0, 255));
       digitalWrite(inA, HIGH);
@@ -95,6 +101,14 @@ void sendData(){
 //    int IMU=123;
 //    val2Bytes(&bytesToSend[NUM_SERVOS*2+2*i], IMU);
 //  }
+
+  // create check digit
+  byte checkdigit = 0;
+  for(int i=0; i < NUM_BYTES - 1; i++){
+    checkdigit += bytesToSend[i]
+  }
+  bytesToSend[NUM_BYTES-1] = checkdigit
+
   if (!noSerial){Serial.print("\nsending data\n");}
   for(int i=0; i<NUM_BYTES; i++){
     if (!noSerial){Serial.print((String)bytesToSend[i]+"\t");}

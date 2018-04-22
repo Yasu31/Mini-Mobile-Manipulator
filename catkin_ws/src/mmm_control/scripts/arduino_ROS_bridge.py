@@ -3,6 +3,7 @@
 # pip3 install rospkg
 # pip3 install catkin_pkg
 import rospy
+import sys
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import Twist
@@ -28,7 +29,7 @@ lastTwist = time.time()
 
 
 # number of bytes we receive from Arduino
-NUM_BYTES = 14
+NUM_BYTES = 14 + 1
 
 # This is the address we setup in the Arduino Program
 # Slave Address 1
@@ -41,11 +42,14 @@ audioPub = rospy.Publisher('audio', Int32, queue_size=10)
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
 def writeData(noun, verb):
-    bytesToSend = struct.pack('!hh', noun, verb)
+    check = abs(noun+verb) % 255  # check digit
+    bytesToSend = struct.pack('!hhB', noun, verb, check)
     global bus
-    if True:
+    try:
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
-    return -1
+    except:
+        print("Failed to send data. Error "+str(sys.exc_info()))
+    return 1
 
 
 def bytes2Int(bytes):
@@ -58,16 +62,21 @@ def bytes2Int(bytes):
 def readData():
     intList = []
     global bus
-    if True:
-        block = bus.read_i2c_block_data(address, 0)  # , NUM_BYTES)
+    try:
+        block = bus.read_i2c_block_data(address, 0, NUM_BYTES)
+        if block[NUM_BYTES-1] != (sum(block[0:NUM_BYTES-1])) % 255:
+            print("Check digit not consistent.")
+            raise Exception
         # print(block)
         # block[0~1] make up a two-byte integer, with twos complement.
         # block[2~3] is the same, too (and so on)
         # So, we try to convert block[] to a list of integers.
         for i in range(int(NUM_BYTES/2)):
             intList.append(bytes2Int(block[i*2:i*2+2]))
-    # print(intList)
-    return intList
+        return intList
+    except:
+        print("Failed to receive data. Error "+str(sys.exc_info()))
+        return None
 # ##### END OF code for I2C communication ########
 
 
@@ -75,10 +84,7 @@ corrections = [-1, 1, -1, 1, -1, -1, 1]
 
 
 def publishSensors():
-    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
-
-    # I only need to do this once, and only once, in the code
-    # rospy.init_node('joint_state_publisher_a', anonymous=True)
+    pub = rospy.Publisher('/joint_states', JointState, queue_size=10)
     rate = rospy.Rate(10)
     jointState = JointState()
     time.sleep(1)
@@ -87,38 +93,27 @@ def publishSensors():
     sensorInfos = None
 
     while not rospy.is_shutdown():
-        try:
-            sensorInfos = readData()
-            for i in range(len(sensorInfos)):
-                sensorInfos[i] *= corrections[i]
-            jointNames = []
-            for i in range(7):
-                jointNames.append("link"+str(i)+"_link"+str(i+1)+"_joint")
-            jointState.header.stamp = rospy.Time.now()
-            jointState.name = jointNames
-            # angles are in degrees*100. Convert to radians
-
-            jointState.position = [i/100*3.1415/180 for i in sensorInfos]
-
-            jointState.velocity = []
-            jointState.effort = []
-            pub.publish(jointState)
-            if time.time()-lastTwist > 0.3:
-                writeData(20, 0)
-                writeData(21, 0)
-        except:
-            print("error received... moving on")
-            audioPub.publish(13)
         rate.sleep()
+        sensorInfos = readData()
+        if sensorInfos is None:
+            continue
+        for i in range(len(sensorInfos)):
+            sensorInfos[i] *= corrections[i]
+        jointState.header.stamp = rospy.Time.now()
+        jointState.name = [num2name[i] for i in range(7)]
+
+        # angles are in degrees*100. Convert to radians
+        jointState.position = [i/100*3.1415/180 for i in sensorInfos]
+        pub.publish(jointState)
+        if time.time()-lastTwist > 0.3:
+            writeData(20, 0)
+            writeData(21, 0)
     # set servos to free
     audioPub.publish(10)
     writeData(20, 0)
     writeData(21, 0)
     for i in range(7):
-        try:
-            writeData(i+10, 0)
-        except:
-            pass
+        writeData(i+10, 0)
 
 
 def num2name(num):
@@ -145,13 +140,10 @@ def sendJointCallback(data):
         radian = data.position[i]
         j = name2num(data.name[i])
         deg = int(radian * 180.0 / 3.14 * 100.0) * corrections[j]
-        try:
-            writeData(j, deg)
-            if firstReceive[j]:
-                writeData(j+10, 1)
-                firstReceive[j] = False
-        except:
-            print("oops, failed to send joint data")
+        writeData(j, deg)
+        if firstReceive[j]:
+            writeData(j+10, 1)
+            firstReceive[j] = False
 
 
 def twistCallback(data):

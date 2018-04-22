@@ -12,7 +12,7 @@
 #define LSM9DS1_AG  0x6B // SPIアドレス設定 if SDO_AG is LOW
 
 #define NUM_SERVOS 7
-#define NUM_BYTES 14
+#define NUM_BYTES 15
 
 int R_PWM=9;
 int R_INA=10;
@@ -55,7 +55,7 @@ void setup() {
   pinMode(R_PWM, OUTPUT);
   pinMode(R_INA, OUTPUT);
   pinMode(R_INB, OUTPUT);
-  
+
   pinMode(L_PWM, OUTPUT);
   pinMode(L_INA, OUTPUT);
   pinMode(L_INB, OUTPUT);
@@ -66,7 +66,7 @@ void setup() {
 //  imu.settings.device.commInterface = IMU_MODE_I2C;
 //  imu.settings.device.mAddress = LSM9DS1_M;
 //  imu.settings.device.agAddress = LSM9DS1_AG;
-//  
+//
 //  if (!imu.begin())                                     //センサ接続エラー時の表示
 //
 //  {
@@ -96,6 +96,5 @@ void loop() {
     }
   }
   delay(1);
-  
-}
 
+}
