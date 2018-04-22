@@ -42,9 +42,9 @@ audioPub = rospy.Publisher('audio', Int32, queue_size=10)
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
 def writeData(noun, verb):
-    bytesToSend = struct.pack('!hhB', noun, verb, 0)
-    checkdigit = sum([struct.unpack('B', byte) for byte in bytesToSend[0:4]])%255
-    bytesToSend[4] = struct.pack('B', checkdigit)
+    bytesToSend_tmp = struct.pack('!hh', noun, verb)
+    checkdigit = sum([int.from_bytes([byte], byteorder='big', signed=False) for byte in bytesToSend_tmp])%256
+    bytesToSend = struct.pack('!hhB', noun, verb, checkdigit)
     global bus
     try:
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
@@ -65,14 +65,16 @@ def readData():
     global bus
     try:
         block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
-        if len(block) != NUM_BYTES:
+        if len(block) < NUM_BYTES:
+            print("Too few data received; "+str(len(block)))
             raise Exception
-        print("check digit:"+str(block[NUM_BYTES-1]))
-        print("actual sum:"+str(sum([struct.unpack('B', byte) for byte in block[0:NUM_BYTES-1]])%255))
-        if block[NUM_BYTES-1] != (sum(block[0:NUM_BYTES-1])) % 255:
-            print("Check digit not consistent.")
-            # print("check digit:"+str(block[NUM_BYTES-1]))
-            # print("actual sum:"+str(sum(block[0:NUM_BYTES-1])%255))
+        check_digit=int.from_bytes([block[NUM_BYTES-1]], byteorder='big', signed=False)
+        check_sum=sum([int.from_bytes([byte], byteorder='big', signed=False) for byte in block[0:NUM_BYTES-1]])%256
+        if check_sum != check_digit:
+            # This happens more often than you'd think...
+            print("Check digit not consistent. Ignoring...")
+            print("check digit:"+str(check_digit))
+            print("actual sum:"+str(check_sum))
             raise Exception
         # print(block)
         # block[0~1] make up a two-byte integer, with twos complement.
@@ -107,7 +109,7 @@ def publishSensors():
         for i in range(len(sensorInfos)):
             sensorInfos[i] *= corrections[i]
         jointState.header.stamp = rospy.Time.now()
-        jointState.name = [num2name[i] for i in range(7)]
+        jointState.name = [num2name(i) for i in range(7)]
 
         # angles are in degrees*100. Convert to radians
         jointState.position = [i/100*3.1415/180 for i in sensorInfos]

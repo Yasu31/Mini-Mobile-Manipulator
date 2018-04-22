@@ -19,6 +19,6 @@
   <node name="arduino_bridge" pkg="mmm_control" type="arduino_ROS_bridge.py" respawn="true" output="screen" />
 
   <!-- Start the camera on RasPi -->
-  <include file="$(find raspicam_node)/launch/camerav1_1280x720.launch"/>
+  <!--<include file="$(find raspicam_node)/launch/camerav1_1280x720.launch"/>-->
 
 </launch>
