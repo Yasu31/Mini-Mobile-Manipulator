@@ -42,8 +42,9 @@ audioPub = rospy.Publisher('audio', Int32, queue_size=10)
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
 def writeData(noun, verb):
-    check = abs(noun+verb) % 255  # check digit
-    bytesToSend = struct.pack('!hhB', noun, verb, check)
+    bytesToSend = struct.pack('!hhB', noun, verb, 0)
+    checkdigit = sum([struct.unpack('B', byte) for byte in bytesToSend[0:4]])%255
+    bytesToSend[4] = struct.pack('B', checkdigit)
     global bus
     try:
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
@@ -64,8 +65,10 @@ def readData():
     global bus
     try:
         block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
+        if len(block) != NUM_BYTES:
+            raise Exception
         print("check digit:"+str(block[NUM_BYTES-1]))
-        print("actual sum:"+str(sum(block[0:NUM_BYTES-1])%255))
+        print("actual sum:"+str(sum([struct.unpack('B', byte) for byte in block[0:NUM_BYTES-1]])%255))
         if block[NUM_BYTES-1] != (sum(block[0:NUM_BYTES-1])) % 255:
             print("Check digit not consistent.")
             # print("check digit:"+str(block[NUM_BYTES-1]))
