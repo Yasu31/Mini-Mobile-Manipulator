@@ -51,6 +51,9 @@ void setup() {
   Wire.onRequest(sendData);
 
   krs.begin();
+  for(int i=0; i<7; i++){
+    krs.setStrc(i,127);
+  }
 
   pinMode(R_PWM, OUTPUT);
   pinMode(R_INA, OUTPUT);
