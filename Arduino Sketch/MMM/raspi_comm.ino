@@ -18,7 +18,7 @@ void receiveData(int byteCount){
   // do digit check
   byte sum = 0;
   for (int i=0; i<byteCount-1; i++){
-    sum += receivedBytes[i]
+    sum += receivedBytes[i];
   }
   if (receivedBytes[byteCount-1] != sum){
     return;
@@ -105,9 +105,9 @@ void sendData(){
   // create check digit
   byte checkdigit = 0;
   for(int i=0; i < NUM_BYTES - 1; i++){
-    checkdigit += bytesToSend[i]
+    checkdigit += bytesToSend[i];
   }
-  bytesToSend[NUM_BYTES-1] = checkdigit
+  bytesToSend[NUM_BYTES-1] = checkdigit;
 
   if (!noSerial){Serial.print("\nsending data\n");}
   for(int i=0; i<NUM_BYTES; i++){
