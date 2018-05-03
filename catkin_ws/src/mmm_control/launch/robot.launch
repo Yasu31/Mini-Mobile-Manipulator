@@ -12,13 +12,12 @@
 
   <!-- Robot state publisher subscribe to joint states and publish "tf" transforms -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-  
+
   <node name="audio" pkg="mmm_control" type="audio.py" respawn="true" output="screen"/>
 
   <!-- Uses i2c to communicate with Arduino, and to the robot- send and receive joint positions, send motor speed -->
   <node name="arduino_bridge" pkg="mmm_control" type="arduino_ROS_bridge.py" respawn="true" output="screen" />
 
-  <!-- Start the camera on RasPi -->
-  <include file="$(find raspicam_node)/launch/camerav1_1280x720.launch"/>
+  <include file="$(find mmm_control)/launch/camera.launch"/>
 
 </launch>
