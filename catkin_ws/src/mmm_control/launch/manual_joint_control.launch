@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Generate/Load robot description file -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mmm_description)/urdf/mmm.urdf.xacro'" />
+
+  <remap from="joint_states" to="/command/joint_states"/>
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="multi_joint_state_publisher">
+    <param name="rate" value="20"/>
+    <param name="use_gui" value="true"/>
+  </node>
+
+</launch>
