@@ -22,7 +22,7 @@ import time
 import struct
 
 # Whether the servos already have had been sent commands to the joints
-firstReceive = [True]*6
+firstReceive = [True]*7
 
 # last time that a Twist message was received.
 lastTwist = time.time()
@@ -136,6 +136,8 @@ def name2num(name):
     for i in range(7):
         if name == num2name(i):
             return i
+    if name == "link6_link7b_joint":
+        return -1
     print("Invalid name for joint")
     return -1
 
@@ -144,7 +146,7 @@ def sendJointCallback(data):
     radian = 0.0
     deg = 0
     dataLength = len(data.name)
-    print("received joint commands for joints" + str(data.name))
+    # print("received joint commands for joints" + str(data.name))
     for i in range(dataLength):
         radian = data.position[i]
         j = name2num(data.name[i])
