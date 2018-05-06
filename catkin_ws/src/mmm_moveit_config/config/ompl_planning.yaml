@@ -172,5 +172,3 @@ gripper:
     - LazyPRMstarkConfigDefault
     - SPARSkConfigDefault
     - SPARStwokConfigDefault
-  projection_evaluator: joints(link6_link7_joint,link6_link7b_joint)
-  longest_valid_segment_fraction: 0.005

@@ -4,7 +4,7 @@
   <!-- make sure you're running the image_transport, which converts the compressed image from raspi camera to raw. -->
   <!-- $rosrun image_transport republish compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw -->
 
-  <arg name="marker_size" default="2.0" />
+  <arg name="marker_size" default="2.9" />
   <arg name="max_new_marker_error" default="0.1" />
   <arg name="max_track_error" default="0.2" />
   <arg name="cam_image_topic" default="/cv_camera/image_raw" />

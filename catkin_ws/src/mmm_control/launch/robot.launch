@@ -3,6 +3,7 @@
   <!-- launches;
   - joint state publisher
   - joint command receiver
+  - audio
   - camera node
     -->
 
