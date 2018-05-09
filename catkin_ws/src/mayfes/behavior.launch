@@ -11,7 +11,7 @@ Also run either (mmm_control robot.launch camera.launch) or (mmm_control only_ar
   <rosparam command="load" file="$(find mmm_moveit_config)/config/joint_names.yaml"/>
   <arg name="debug" default="false" />
   <arg name="sim" value="false" />
-  <arg name="robot_ip" value="192.168.10.240" />
+  <arg name="robot_ip" value="192.168.3.17" />
   
   <include file="$(find mmm_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
