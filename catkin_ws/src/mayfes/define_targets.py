@@ -66,7 +66,7 @@ if __name__ == "__main__":
     pose.header.frame_id = "ar_marker_0"
     path = os.path.join(rospkg.RosPack().get_path("mayfes"), "meshes/candy_box.stl")
     candy_box_co = make_mesh("candy_box", pose, path, scale=(0.001,0.001,0.001))
-    candy_box_transform = (0.0, -0.06, 0.06)  # the transform from marker position to target position(where to reach)
+    candy_box_transform = (0.0, -0.03, 0.06)  # the transform from marker position to target position(where to reach)
 
     
     rate = rospy.Rate(10)

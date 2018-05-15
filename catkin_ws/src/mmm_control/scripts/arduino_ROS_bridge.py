@@ -152,9 +152,10 @@ def sendJointCallback(data):
         j = name2num(data.name[i])
         deg = int(radian * 180.0 / 3.14 * 100.0) * corrections[j]
         writeData(j, deg)
-        if firstReceive[j]:
-            writeData(j+10, 1)
-            firstReceive[j] = False
+        writeData(j+10, 1)
+        #if firstReceive[j]:
+        #    writeData(j+10, 1)
+        #    firstReceive[j] = False
 
 
 def twistCallback(data):
