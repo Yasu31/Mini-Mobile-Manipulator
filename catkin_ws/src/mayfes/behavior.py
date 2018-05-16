@@ -18,19 +18,22 @@ def grab_candy(trans, rot):
     '''
     receives a Pose, and if it can be grabbed, grabs.
     '''
-    if (trans.x**2 + trans.y**2 + trans.z**2) > 0.2**2:
+    if (trans[0]**2 + trans[1]**2 + trans[2]**2) > 0.2**2:
         return
     pose = Pose()
     pose.position.x = trans[0]
     pose.position.y = trans[1]
     pose.position.z = trans[2]
+    pose.orientation.w = 1.0
     global arm_group
     arm_group.set_pose_target(pose)
     try:
         # try to go grab that candy
+        print("trying to grab candy box...")
         arm_group.go(wait=True)
     except:
-        # failed to compute viable trajectory
+        # failed to compute viable trajector
+        print("failed to grab candy box")
         pass
         
 
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         rospy.sleep(0.1)
         try:
-            (trans, rot) = tf_listener.lookupTransform(arm_planning_frame, "candy_box_target")
+            (trans, rot) = tf_listener.lookupTransform(arm_planning_frame, "candy_box_target", rospy.Time(0))
             grab_candy(trans, rot)
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue

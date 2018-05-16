@@ -19,6 +19,31 @@
         <joint name="link6_link7_joint" />
         <joint name="link6_link7b_joint" />
     </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="bird" group="manipulator">
+        <joint name="link0_link1_joint" value="0" />
+        <joint name="link1_link2_joint" value="-0.1956" />
+        <joint name="link2_link3_joint" value="1.0471" />
+        <joint name="link3_link4_joint" value="0" />
+        <joint name="link4_link5_joint" value="1.5707" />
+        <joint name="link5_link6_joint" value="0" />
+    </group_state>
+    <group_state name="zero" group="manipulator">
+        <joint name="link0_link1_joint" value="0" />
+        <joint name="link1_link2_joint" value="0" />
+        <joint name="link2_link3_joint" value="0" />
+        <joint name="link3_link4_joint" value="0" />
+        <joint name="link4_link5_joint" value="0" />
+        <joint name="link5_link6_joint" value="0" />
+    </group_state>
+    <group_state name="look_down" group="manipulator">
+        <joint name="link0_link1_joint" value="-0.9839" />
+        <joint name="link1_link2_joint" value="-0.7134" />
+        <joint name="link2_link3_joint" value="1.0471" />
+        <joint name="link3_link4_joint" value="-1.5707" />
+        <joint name="link4_link5_joint" value="1.1219" />
+        <joint name="link5_link6_joint" value="-1.5794" />
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="end_effector" parent_link="gripper_frame" group="gripper" parent_group="manipulator" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
