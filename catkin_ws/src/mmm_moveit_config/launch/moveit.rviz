@@ -252,7 +252,7 @@ Visualization Manager:
       Marker Topic: /visualization_marker
       Name: Marker
       Namespaces:
-        {}
+        basic_shapes: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -286,10 +286,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: -0.225203007
+      Pitch: 0.194797009
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 2.91494799
+      Yaw: 5.0249505
     Saved: ~
 Window Geometry:
   Displays:
