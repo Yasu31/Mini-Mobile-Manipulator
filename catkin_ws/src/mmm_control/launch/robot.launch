@@ -7,9 +7,9 @@
   - camera node
     -->
 
-  <include file="$(find mmm_control)/launch/only_arduino.launch"/>
+  <include file="$(find mmm_control)/launch/minimal.launch"/>
 
-  <node name="audio" pkg="mmm_control" type="audio.py" respawn="true" output="screen"/>
+  <include file="$(find mmm_control)/launch/audio.launch"/>
   
   <include file="$(find mmm_control)/launch/camera.launch"/>
 

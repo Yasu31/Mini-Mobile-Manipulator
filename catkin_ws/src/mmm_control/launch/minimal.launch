@@ -1,9 +1,9 @@
 <launch>
-  <!-- Launch this ON THE RASPI first of all, then you can start using your robot -->
-    <!-- launches;
-      - joint state publisher
-        - joint command receiver
-	  - camera node
+  <!-- Launch this ON THE RASPI, then you can start using your robot -->
+  <!-- launches the stuff that's minimally required to make the robot move;
+       - robot state publisher
+       - arduino ros bridge
+       - URDF description
 	      -->
 
   <!-- Generate/Load robot description file -->

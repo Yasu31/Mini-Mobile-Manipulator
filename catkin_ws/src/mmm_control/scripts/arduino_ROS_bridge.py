@@ -146,7 +146,7 @@ def sendJointCallback(data):
     radian = 0.0
     deg = 0
     dataLength = len(data.name)
-    # print("received joint commands for joints" + str(data.name))
+    print("received joint commands for joints" + str(data.name))
     for i in range(dataLength):
         radian = data.position[i]
         j = name2num(data.name[i])

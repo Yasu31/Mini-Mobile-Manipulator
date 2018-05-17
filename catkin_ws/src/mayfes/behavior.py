@@ -6,39 +6,125 @@ import sys
 import copy
 import moveit_commander
 import moveit_msgs.msg
-from geometry_msgs.msg import Pose, Point, PoseStamped
-from moveit_msgs.msg import CollisionObject
-from shape_msgs.msg import Mesh, MeshTriangle
+from geometry_msgs.msg import Pose, Point, PoseStamped, Twist
+from sensor_msgs.msg import JointState
+from std_msgs.msg import String
 import os.path
-import pyassimp
 import threading
 import tf
 
-def grab_candy(trans, rot):
+unit_forward = 2.0
+unit_turn = 2.0
+unit_wait = 2.0
+
+hand_opened = 0.24
+
+def publish_twist(msg):
     '''
-    receives a Pose, and if it can be grabbed, grabs.
+    publish twist messages for the duration of unit_wait.
     '''
-    if (trans.x**2 + trans.y**2 + trans.z**2) > 0.2**2:
-        return
-    pose = Pose()
-    pose.position.x = trans[0]
-    pose.position.y = trans[1]
-    pose.position.z = trans[2]
+    global twist_pub
+    for i in range(10):
+        twist_pub.publish(msg)
+        rospy.sleep(unit_wait/10)
+    return
+
+hand_current=None
+
+def js_callback(msg):
+    '''
+    records the angle of the hand, to be referenced in hand().
+    '''
+    for i in range(len(msg.name)):
+        if msg.name[i] == "link6_link7_joint":
+            global hand_current
+            hand_current = msg.position[i]
+
+
+def hand(open_hand):
+    '''opens or closes hand. For closing, sends <current position - 0.5> for 3 seconds to close hand.'''
+    js = JointState()
+    js.header.stamp=rospy.get_rostime()
+    js.name.append("link6_link7_joint")
+    global joint_pub
+    if open_hand:
+        js.position=hand_opened
+        joint_pub.publish(js)
+    else:
+        for i in range(30):
+            global hand_current
+            js.position = hand_current - 0.1
+            joint_pub.publish(js)
+            rospy.sleep(0.1)
+
+    
+def command_callback(msg):
+    command = msg.data
+    print("received command named ", command)
+    twist = Twist()
+    twist.header.stamp=rospy.get_rostime()
     global arm_group
-    arm_group.set_pose_target(pose)
-    try:
-        # try to go grab that candy
+    if command == "forward":
+        twist.linear.x = unit_forward
+        publish_twist(twist)
+    elif command == "back":
+        twist.linear.x = -unit_forward
+        publish_twist(twist)
+    elif command == "right":
+        twist.angular.z = -unit_turn
+        publish_twist(twist)
+    elif command == "left":
+        twist.angular.z = unit_turn
+        publish_twist(twist)
+
+    if command == "pickup":
+        print("picking up something from the ground...")
+        print("first, moving to 'bird' position and opening hand")
+        arm_group.set_named_target("bird")
+        hand(True)
         arm_group.go(wait=True)
-    except:
-        # failed to compute viable trajectory
-        pass
+
+        print("lowering arm")
+        arm_group.set_named_target("lower")
+        arm_group.go(wait=True)
+
+        print("closing hand")
+        hand(False)
+
+        print("raising arm back to 'bird' position")
+        arm_group.set_named_target("bird")
+        arm_group.go(wait=True)
         
+    elif command == "put_down":
+        print("moving to 'bird' position")
+        arm_group.set_named_target("bird")
+        arm_group.go(wait=True)
+        
+        print("lowering arm")
+        arm_group.set_named_target("lower")
+        arm_group.go(wait=True)
+
+        print("opening hand")
+        hand(True)
+
+        print("going back to 'bird' position")
+        arm_group.set_named_target("bird")
+        arm_group.go(wait=True)
+
+    elif command == "relax":
+        pass
+    elif command == "stiffen":
+        pass
+    elif command=="janken":
+        pass
 
 
+        
 if __name__ == "__main__":
     rospy.init_node("behavior", anonymous=True)
     tf_listener = tf.TransformListener()
-    print("============ Starting  setup")
+
+    print("============ Starting MoveIt! setup")
     moveit_commander.roscpp_initialize(sys.argv)
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
@@ -50,15 +136,12 @@ if __name__ == "__main__":
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
                                     queue_size=20)
-    print("============ Waiting for RVIZ...")
+
+    command_sub = rospy.Subscriber("/command", String, command_callback)
+    twist_pub=rospy.Publisher("/turtle1/cmd_vel", Twist)
+    joint_pub=rospy.Publisher("/command/joint_states", JointState)
     rospy.sleep(3)
-    print("============ Starting ")
+    rate = rospy.rate(10)
     while not rospy.is_shutdown():
         rospy.sleep(0.1)
-        try:
-            (trans, rot) = tf_listener.lookupTransform(arm_planning_frame, "candy_box_target")
-            grab_candy(trans, rot)
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue
-
 
