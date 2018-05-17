@@ -143,13 +143,3 @@ if __name__ == "__main__":
     rate = rospy.rate(10)
     while not rospy.is_shutdown():
         rospy.sleep(0.1)
-<<<<<<< HEAD
-=======
-        try:
-            (trans, rot) = tf_listener.lookupTransform(arm_planning_frame, "candy_box_target", rospy.Time(0))
-            grab_candy(trans, rot)
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue
-
->>>>>>> 37e1b6da9d21507a3ae8c2d349aae46572ab2523
-
