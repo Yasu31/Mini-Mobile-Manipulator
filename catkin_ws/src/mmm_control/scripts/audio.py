@@ -17,7 +17,8 @@ def playAudioCallback(data):
     if playing:
         return
     global rospack
-    path = rospack.get_path('audio')+"/wav/"+data.data+".wav"
+    path = rospack.get_path('mmm_control')+"/audio/"+data.data+".wav"
+    print(playing, "path")
     if os.path.exists(path):
         playing = True
         playsound(path)

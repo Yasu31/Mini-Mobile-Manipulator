@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 
 import rospy
-import rospkg
 import sys
-import copy
 import moveit_commander
 import moveit_msgs.msg
-from geometry_msgs.msg import Pose, Point, PoseStamped, Twist
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String
-import os.path
-import threading
+from geometry_msgs.msg import Twist
 import tf
+import random
+from playback import Playback
 
 unit_forward = 2.0
 unit_turn = 2.0
 unit_wait = 2.0
 
 hand_opened = 0.24
+
+repertoire = ['america', 'daisy']
+
 
 def publish_twist(msg):
     '''
@@ -29,7 +30,9 @@ def publish_twist(msg):
         rospy.sleep(unit_wait/10)
     return
 
-hand_current=None
+
+hand_current = None
+
 
 def js_callback(msg):
     '''
@@ -44,25 +47,26 @@ def js_callback(msg):
 def hand(open_hand):
     '''opens or closes hand. For closing, sends <current position - 0.5> for 3 seconds to close hand.'''
     js = JointState()
-    js.header.stamp=rospy.get_rostime()
+    js.header.stamp = rospy.get_rostime()
     js.name.append("link6_link7_joint")
+    js.position.append(0)
     global joint_pub
     if open_hand:
-        js.position=hand_opened
+        js.position[0] = hand_opened
         joint_pub.publish(js)
     else:
         for i in range(30):
             global hand_current
-            js.position = hand_current - 0.1
+            js.position[0] = hand_current - 0.1
             joint_pub.publish(js)
             rospy.sleep(0.1)
 
-    
+
 def command_callback(msg):
     command = msg.data
     print("received command named ", command)
     twist = Twist()
-    twist.header.stamp=rospy.get_rostime()
+
     global arm_group
     if command == "forward":
         twist.linear.x = unit_forward
@@ -94,7 +98,7 @@ def command_callback(msg):
         print("raising arm back to 'bird' position")
         arm_group.set_named_target("bird")
         arm_group.go(wait=True)
-        
+
     elif command == "put_down":
         print("moving to 'bird' position")
         arm_group.set_named_target("bird")
@@ -114,14 +118,24 @@ def command_callback(msg):
         pass
     elif command == "stiffen":
         pass
-    elif command=="janken":
-        pass
+    elif command == "janken":
+        print("doing janken...")
+        audio_pub.publish("janken")
+        playback.play("janken_"+str(random.randint(1, 3)))
+    elif command == "dance":
+        song = repertoire[random.randint(0, len(repertoire)-1)]
+        print("dance command received, playing ", song)
+        arm_group.set_named_target("zero")
+        arm_group.go(wait=True)
+
+        audio_pub.publish(song)
+        playback.play(song)
 
 
-        
 if __name__ == "__main__":
     rospy.init_node("behavior", anonymous=True)
     tf_listener = tf.TransformListener()
+    playback = Playback()
 
     print("============ Starting MoveIt! setup")
     moveit_commander.roscpp_initialize(sys.argv)
@@ -132,14 +146,17 @@ if __name__ == "__main__":
     print("the arm_group's planning frame is ", arm_planning_frame)
 #    hand_group=moveit_commander.MoveGroupCommander("gripper")
     display_trajectory_publisher = rospy.Publisher(
-                                    '/move_group/display_planned_path',
-                                    moveit_msgs.msg.DisplayTrajectory,
-                                    queue_size=20)
+        '/move_group/display_planned_path',
+        moveit_msgs.msg.DisplayTrajectory,
+        queue_size=20)
 
-    command_sub = rospy.Subscriber("/command", String, command_callback)
-    twist_pub=rospy.Publisher("/turtle1/cmd_vel", Twist)
-    joint_pub=rospy.Publisher("/command/joint_states", JointState)
-    rospy.sleep(3)
-    rate = rospy.rate(10)
+    rospy.Subscriber("/command", String, command_callback)
+    rospy.Subscriber("/joint_states", JointState, js_callback)
+    twist_pub = rospy.Publisher("/turtle1/cmd_vel", Twist, queue_size=10)
+    joint_pub = rospy.Publisher(
+        "/command/joint_states", JointState, queue_size=10)
+    audio_pub = rospy.Publisher('/audio', String, queue_size=10)
+    print("PYTHON CODE IS READY")
+    rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         rospy.sleep(0.1)

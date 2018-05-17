@@ -20,7 +20,7 @@ class RobotTrajectoryFollower(object):
         self._as.start()
 
     def execute_cb(self, data):
-        r = rospy.Rate(10)
+        r = rospy.Rate(20)
         numOfPoints = len(data.trajectory.points)
         jointState = JointState()
         print("Received Joint Trajectory with " + str(numOfPoints) +
@@ -29,7 +29,7 @@ class RobotTrajectoryFollower(object):
             jointState.name = data.trajectory.joint_names
             for i in range(numOfPoints):
                 jointState.position = data.trajectory.\
-                                      points[i].positions
+                    points[i].positions
                 self.pub.publish(jointState)
                 r.sleep()
         self._as.set_succeeded()
