@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pykakasi import kakasi
 import numpy as np
 import csv

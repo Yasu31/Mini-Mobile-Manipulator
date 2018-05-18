@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import time
 from linebot.models import (
     TextSendMessage, ImageSendMessage
@@ -46,7 +47,7 @@ class Logic:
         self.make_paths()
         self.phrases = self.filesmanager.load_phrases()
         self.pub = rospy.Publisher('/command', String, queue_size=10)
-        self.audio_pub = rospy.Publisher('/audio', String, queue_size=10)
+        self.audio_pub = rospy.Publisher('/audio', String, queue_size=1)
         rospy.init_node("bot", anonymous=True)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.ar_callback)
         rospy.Subscriber("/cv_camera/image_raw", Image, self.img_callback)
@@ -145,8 +146,8 @@ class Logic:
             self.pub.publish(command)
             if command == "photo":
                 # convert self.latest_image to a cv2 image and save it to img_pending_img
-                #self.img_pending_img = self.bridge.imgmsg_to_cv2(self.latest_image, desired_encoding="passthrough")
-                self.img_pending_img = self.test_image
+                self.img_pending_img = self.bridge.imgmsg_to_cv2(self.latest_image, desired_encoding="bgr8")
+                #self.img_pending_img = self.test_image
                 self.img_pending_name = str(int(time.time()))
                 self.img_pending_time = time.time()
                 if user_id == self.superuser:
@@ -220,7 +221,8 @@ class Logic:
             if rep_text == "photo":
                 url = self.url + "/img/" + self.img_pending_name+".jpg"
                 self.print_debug("sending image "+url)
-                reply = ImageSendMessage(original_content_url=url, preview_image_url = url)
+                reply = TextSendMessage(text = url+" check it out")
+                #reply = ImageSendMessage(original_content_url=url, preview_image_url = url)
                 self.rooms[i].send_text(url)
                 return reply
             else:

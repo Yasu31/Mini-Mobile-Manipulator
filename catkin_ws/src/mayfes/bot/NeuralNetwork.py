@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 The Neural Network interface for the chatbot.
 Use this to train the NN as well as to actually use it.
