@@ -84,15 +84,15 @@ def analyze_messages():
     events = eventsQueue.get(block=True)
     print(len(events), "number of events received")
     for event in events:
-        replies = []
+        reply = TextSendMessage(text="oopsies")
         user_id, group_id = check_profile(event.source)
         if user_id == "Udeadbeefdeadbeefdeadbeefdeadbeef":
             print("connection check message.")
             continue
         if isinstance(event.message, TextMessage):
             print("message received, Analyzing source...")
-            replies.append(logic.receive_text(
-                user_id, group_id, event.message.text))
+            reply=logic.receive_text(
+                user_id, group_id, event.message.text)
         elif isinstance(event.message, (ImageMessage, VideoMessage, AudioMessage)):
             if isinstance(event.message, ImageMessage):
                 ext = '.jpg'
@@ -100,15 +100,15 @@ def analyze_messages():
                 ext = '.mp4'
             else:
                 ext = '.m4a'
-            replies.append(logic.receive_media(
-                user_id, group_id, line_bot_api.get_message_content(event.message.id), ext))
+            reply=logic.receive_media(
+                user_id, group_id, line_bot_api.get_message_content(event.message.id), ext)
         else:
             continue
         global replying
         while replying:
             time.sleep(0.01)
         replying = True
-        line_bot_api.reply_message(event.reply_token, replies)
+        line_bot_api.reply_message(event.reply_token, reply)
         replying = False
     # recursive function!
     analyze_messages()
@@ -154,6 +154,9 @@ def callback():
 
 @app.route('/img/<filename>')
 def return_picture(filename):
+    '''
+    all the images in the ./img directory are visible!
+'''
     # based on https://github.com/chokepoint/flaskgur/blob/master/flaskgur/flaskgur.py
     return send_from_directory('./img', filename)
 

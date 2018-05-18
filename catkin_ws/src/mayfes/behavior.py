@@ -2,8 +2,8 @@
 
 import rospy
 import sys
-import moveit_commander
-import moveit_msgs.msg
+#import moveit_commander
+#import moveit_msgs.msg
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
@@ -18,6 +18,8 @@ unit_wait = 2.0
 hand_opened = 0.24
 
 repertoire = ['america', 'daisy']
+
+state = ""
 
 
 def publish_twist(msg):
@@ -67,7 +69,7 @@ def command_callback(msg):
     print("received command named ", command)
     twist = Twist()
 
-    global arm_group
+#    global arm_group
     if command == "forward":
         twist.linear.x = unit_forward
         publish_twist(twist)
@@ -84,35 +86,25 @@ def command_callback(msg):
     if command == "pickup":
         print("picking up something from the ground...")
         print("first, moving to 'bird' position and opening hand")
-        arm_group.set_named_target("bird")
         hand(True)
-        arm_group.go(wait=True)
 
         print("lowering arm")
-        arm_group.set_named_target("lower")
-        arm_group.go(wait=True)
+
 
         print("closing hand")
         hand(False)
 
         print("raising arm back to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
+
 
     elif command == "put_down":
         print("moving to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
         print("lowering arm")
-        arm_group.set_named_target("lower")
-        arm_group.go(wait=True)
 
         print("opening hand")
         hand(True)
 
         print("going back to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
 
     elif command == "relax":
         pass
@@ -125,9 +117,6 @@ def command_callback(msg):
     elif command == "dance":
         song = repertoire[random.randint(0, len(repertoire)-1)]
         print("dance command received, playing ", song)
-        arm_group.set_named_target("zero")
-        arm_group.go(wait=True)
-
         audio_pub.publish(song)
         playback.play(song)
 
@@ -136,20 +125,7 @@ if __name__ == "__main__":
     rospy.init_node("behavior", anonymous=True)
     tf_listener = tf.TransformListener()
     playback = Playback()
-
-    print("============ Starting MoveIt! setup")
-    moveit_commander.roscpp_initialize(sys.argv)
-    robot = moveit_commander.RobotCommander()
-    scene = moveit_commander.PlanningSceneInterface()
-    arm_group = moveit_commander.MoveGroupCommander("manipulator")
-    arm_planning_frame = arm_group.get_planning_frame()
-    print("the arm_group's planning frame is ", arm_planning_frame)
-#    hand_group=moveit_commander.MoveGroupCommander("gripper")
-    display_trajectory_publisher = rospy.Publisher(
-        '/move_group/display_planned_path',
-        moveit_msgs.msg.DisplayTrajectory,
-        queue_size=20)
-
+    
     rospy.Subscriber("/command", String, command_callback)
     rospy.Subscriber("/joint_states", JointState, js_callback)
     twist_pub = rospy.Publisher("/turtle1/cmd_vel", Twist, queue_size=10)

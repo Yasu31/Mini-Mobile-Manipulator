@@ -29,7 +29,13 @@ careful- the MMM currently sources the  setup file  for the ice-cream catkin_ws!
 ## To Move the robot (for MayFes)
 * make sure to be on same network as robot
 * on the computer (not RasPi), set ROS_MASTER_URI to http://(IP of raspi):11311 inside ~/.bashrd, set robot_ip to IP of raspi in MoveIt file as well
+
+# todo: update
 * Run `roslaunch mmm_control only_arduino.launch`on the robot and `roslaunch mmm_control camera.launch` on either computer
 * If the camera is connected to the robot raspi, running `robot.launch` will launch both previous launch files
 * Run `roslaunch mmm_control ar_track.launch` on some computer, to start tracking AR marker
 * Run `roslaunch mayfes behavior.launch` to start the actual behavior created for MayFes.
+
+
+### some tips(??)
+I am having a hard time launching the MoveIt! stuff. As suggested on this page, I tried [sudo apt install ros-kinetic*](https://answers.ros.org/question/253506/unable-to-connect-to-move_group-action-server-pickup-within-allotted-time/).
