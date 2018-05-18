@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 from xml.dom import minidom
 import os
 # https://qiita.com/akabei/items/38f974716f194afea4a5
@@ -33,7 +34,7 @@ def load_credentials():
     create an XML file in the same directory as this script, with the structure:
     <data><token> *channel access token* </token>
     <secret> *channel secret" </secret></data>
-'''
+    '''
     xdoc = minidom.parse("credentials.xml")
     token = xdoc.getElementsByTagName("token")[0].childNodes[0].data
     secret = xdoc.getElementsByTagName("secret")[0].childNodes[0].data
@@ -176,4 +177,5 @@ if __name__ == "__main__":
     logic = Logic(flask=app)
     atexit.register(logic.save_log)
     app.run(host="0.0.0.0", port=port)
+    rospy.spin()
     eventsQueue.join()

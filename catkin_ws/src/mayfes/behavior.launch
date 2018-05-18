@@ -6,5 +6,7 @@ Also run either (mmm_control robot.launch camera.launch) or (mmm_control only_ar
   <include file="$(find mmm_description)/launch/rviz.launch"/>
   <node name="behavior" pkg="mayfes" type="behavior.py" output="screen" respawn="true"/>
 
+  <node name="image_saver" pkg="mayfes" type="image_saver.py" output="screen" respawn="true"/>
+
   <include file="$(find mmm_control)/launch/audio.launch"/>   
 </launch>

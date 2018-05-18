@@ -38,6 +38,8 @@ address = 0x04
 bus = SMBus(1)
 audioPub = rospy.Publisher('audio', Int32, queue_size=10)
 
+using_bus = False
+fail_counter = 0
 
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
@@ -47,7 +49,11 @@ def writeData(noun, verb):
     bytesToSend = struct.pack('!hhB', noun, verb, checkdigit)
     global bus
     try:
+        while using_bus:
+            time.sleep(0.05)
+        using_bus=True
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
+        using_bus=False
     except:
         print("Failed to send data. Error "+str(sys.exc_info()))
     return 1
@@ -64,7 +70,11 @@ def readData():
     intList = []
     global bus
     try:
+        while using_bus:
+            time.sleep(0.05)
+        using_bus=True
         block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
+        using_bus=False
         if len(block) < NUM_BYTES:
             print("Too few data received; "+str(len(block)))
             raise Exception
@@ -85,6 +95,10 @@ def readData():
         return intList
     except:
         print("Failed to receive data. Error "+str(sys.exc_info()))
+        fail_counter +=1
+        if fail_counter > 20:
+            print("TOO MUCH FAILS!! Exiting...")
+            exit()
         return None
 # ##### END OF code for I2C communication ########
 
@@ -170,7 +184,13 @@ def joint0Callback(msg):
     writeData(0, int(msg.data*180.0/3.14*100.0)*corrections[0])
     return
 
-
+def stiffenCallback(msg):
+    i = int(msg.data)
+    if i != 1 or i != 0:
+        return
+    for j in range(7):
+        writeData(j+10, i)
+        
 if __name__ == '__main__':
     try:
         rospy.init_node('node', anonymous=True)
@@ -178,6 +198,7 @@ if __name__ == '__main__':
                          sendJointCallback)
         rospy.Subscriber("/turtle1/cmd_vel", Twist, twistCallback)
         rospy.Subscriber("/joint0", Float32, joint0Callback)
+        rospy.Subscriber("/stiffen", Int32, stiffenCallback)
         publishSensors()
     except rospy.ROSInterruptException:
         pass
