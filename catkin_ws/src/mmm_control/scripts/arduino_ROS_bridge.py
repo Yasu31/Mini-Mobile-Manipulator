@@ -160,7 +160,7 @@ def sendJointCallback(data):
 
 def twistCallback(data):
     writeData(20, int(100*(data.linear.x+data.angular.z)))
-    writeData(21, int(100*(data.linear.x-data.angular.z)))
+    writeData(21, -int(100*(data.linear.x-data.angular.z)))
     global lastTwist
     lastTwist = time.time()
 

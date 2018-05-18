@@ -9,8 +9,9 @@
 
   <include file="$(find mmm_control)/launch/minimal.launch"/>
 
-  <include file="$(find mmm_control)/launch/audio.launch"/>
+<!--  <include file="$(find mmm_control)/launch/audio.launch"/> -->
   
   <include file="$(find mmm_control)/launch/camera.launch"/>
+
 
 </launch>
