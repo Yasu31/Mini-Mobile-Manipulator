@@ -28,14 +28,14 @@ careful- the MMM currently sources the  setup file  for the ice-cream catkin_ws!
 
 ## To Move the robot (for MayFes)
 * make sure to be on same network as robot
-* on the computer (not RasPi), set ROS_MASTER_URI to http://(IP of raspi):11311 inside ~/.bashrc
+* on the computer (not RasPi), set ROS_MASTER_URI to http://(IP of raspi):11311 inside ~/.bashrd, set robot_ip to IP of raspi in MoveIt file as well
 
-
-1. Run `roslaunch mmm_control robot.launch`on the robot. This will launch the arduino connection and the camera and QR code&circle tracking nodes.
-1. `python pagekite.py 5000 sub-yasu31.pagekite.me` on the PC will let it become a server for the LINE chatbot.
-* Run `python3 bot.py` the same computer that runs pagekite.py, this will start the LINE chatbot. This will publish stuff to the /command ros topic accordingly to control the robot.
-* Run `roslaunch mayfes behavior.launch` to start the actual behavior created for MayFes. This listens in on the /command ROS topic, and takes steps to realize that behavior.
+# todo: update
+* Run `roslaunch mmm_control only_arduino.launch`on the robot and `roslaunch mmm_control camera.launch` on either computer
+* If the camera is connected to the robot raspi, running `robot.launch` will launch both previous launch files
+* Run `roslaunch mmm_control ar_track.launch` on some computer, to start tracking AR marker
+* Run `roslaunch mayfes behavior.launch` to start the actual behavior created for MayFes.
 
 
 ### some tips(??)
-I am having a hard time launching the MoveIt! stuff. As suggested on this page, I tried [sudo apt install ros-kinetic*](https://answers.ros.org/question/253506/unable-to-connect-to-move_group-action-server-pickup-within-allotted-time/). It didn't work, it may be an issue with the eduroam security settings or something. I'm pretty sure the same thing worked at home. Oh well, I deleted all the moveit stuff from my code so it's all right now.
+I am having a hard time launching the MoveIt! stuff. As suggested on this page, I tried [sudo apt install ros-kinetic*](https://answers.ros.org/question/253506/unable-to-connect-to-move_group-action-server-pickup-within-allotted-time/).
