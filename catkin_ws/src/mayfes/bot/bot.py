@@ -153,13 +153,13 @@ def callback():
     return 'OK'
 
 
-#@app.route('/img/<filename>')
-#def return_picture(filename):
+@app.route('/img/<filename>')
+def return_picture(filename):
     '''
     all the images in the ./img directory are visible!
 '''
     # based on https://github.com/chokepoint/flaskgur/blob/master/flaskgur/flaskgur.py
-#    return send_from_directory('./img', filename)
+    return send_from_directory('./img', filename)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
 from linebot.models import (
@@ -47,6 +47,7 @@ class Logic:
         self.make_paths()
         self.phrases = self.filesmanager.load_phrases()
         self.pub = rospy.Publisher('/command', String, queue_size=10)
+        self.img_saver_pub = rospy.Publisher("/save_image", Image, queue_size=1)
         self.audio_pub = rospy.Publisher('/audio', String, queue_size=1)
         rospy.init_node("bot", anonymous=True)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.ar_callback)
@@ -146,14 +147,14 @@ class Logic:
             self.pub.publish(command)
             if command == "photo":
                 # convert self.latest_image to a cv2 image and save it to img_pending_img
-                self.img_pending_img = self.bridge.imgmsg_to_cv2(self.latest_image, desired_encoding="bgr8")
-                #self.img_pending_img = self.test_image
-                self.img_pending_name = str(int(time.time()))
+                self.audio_pub.publish("shutter")
+                time.sleep(3)
+                self.img_pending_img = self.latest_image
+                self.img_pending_name = str(self.img_pending_img.header.stamp.secs)
                 self.img_pending_time = time.time()
                 if user_id == self.superuser:
-                    path = "./img/"+self.img_pending_name+".jpg"
-                    self.print_debug("saving image to "+path)
-                    cv2.imwrite(path, self.img_pending_img)
+                    print("having the image_saver node save the image...")
+                    self.img_saver_pub.publish(self.img_pending_img)
                     self.img_pending_img= None
                 return "photo"
             return text
@@ -180,12 +181,11 @@ class Logic:
             if marker.id == self.temp_user_id:
                 if self.img_pending_img is not None:
                     # save the image to file system
-                    if time.time() - self.img_pending_time < 20:
+                    if time.time() - self.img_pending_time < 10:
                         self.audio_pub.publish("chime")
-                        path = "./img/"+self.img_pending_name+".jpg"
-                        self.print_debug("saving image to "+path)
-                        cv2.imwrite(path, self.img_pending_img)
-                        self.img_pending_img= None
+                        print("having the image_saver node save the image...")
+                        self.img_saver_pub.publish(self.img_pending_img)
+                        self.img_pending_img = None
 
 
     def receive_text(self, user_id, group_id, text):
