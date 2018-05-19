@@ -11,7 +11,7 @@
   <arg name="cam_info_topic" default="/cv_camera/camera_info" />
   <arg name="output_frame" default="/camera" />
 
-  <node name="ar_track" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="true" output="screen">
+  <node name="ar_track" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="true">
     <param name="marker_size"           type="double" value="$(arg marker_size)" />
     <param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
     <param name="max_track_error"       type="double" value="$(arg max_track_error)" />

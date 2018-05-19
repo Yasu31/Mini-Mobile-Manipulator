@@ -5,7 +5,7 @@
 import rospy
 import sys
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Int32, Float32
+from std_msgs.msg import Int32, Float32, String
 from geometry_msgs.msg import Twist
 
 
@@ -36,7 +36,6 @@ NUM_BYTES = 14 + 1
 address = 0x04
 
 bus = SMBus(1)
-audioPub = rospy.Publisher('audio', Int32, queue_size=10)
 
 using_bus = False
 fail_counter = 0
@@ -47,13 +46,19 @@ def writeData(noun, verb):
     bytesToSend_tmp = struct.pack('!hh', noun, verb)
     checkdigit = sum([int.from_bytes([byte], byteorder='big', signed=False) for byte in bytesToSend_tmp])%256
     bytesToSend = struct.pack('!hhB', noun, verb, checkdigit)
-    global bus
+    global bus, using_bus
     try:
-        while using_bus:
-            time.sleep(0.05)
+#        while using_bus:
+#            time.sleep(0.01)
         using_bus=True
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
         using_bus=False
+    except OSError:
+        global fail_counter
+        fail_counter +=1
+        if fail_counter>50:
+            print("too many errors, so exiting...")
+            exit()
     except:
         print("Failed to send data. Error "+str(sys.exc_info()))
     return 1
@@ -68,10 +73,10 @@ def bytes2Int(bytes):
 # reads bytes from Arduino and return it as list of integers
 def readData():
     intList = []
-    global bus
+    global bus, using_bus
     try:
-        while using_bus:
-            time.sleep(0.05)
+#        while using_bus:
+#            time.sleep(0.05)
         using_bus=True
         block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
         using_bus=False
@@ -93,12 +98,14 @@ def readData():
         for i in range(int(NUM_BYTES/2)):
             intList.append(bytes2Int(block[i*2:i*2+2]))
         return intList
+    except OSError:
+        global fail_counter
+        fail_counter += 1
+        if fail_counter>50:
+            print("OsError received, exiting...")
+            exit()
     except:
         print("Failed to receive data. Error "+str(sys.exc_info()))
-        fail_counter +=1
-        if fail_counter > 20:
-            print("TOO MUCH FAILS!! Exiting...")
-            exit()
         return None
 # ##### END OF code for I2C communication ########
 
@@ -108,11 +115,9 @@ corrections = [-1, 1, -1, 1, -1, -1, 1]
 
 def publishSensors():
     pub = rospy.Publisher('/joint_states', JointState, queue_size=10)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(7)
     jointState = JointState()
     time.sleep(1)
-    global audioPub, lastTwist
-    audioPub.publish(6)
     sensorInfos = None
 
     while not rospy.is_shutdown():
@@ -132,7 +137,6 @@ def publishSensors():
             writeData(20, 0)
             writeData(21, 0)
     # set servos to free
-    audioPub.publish(10)
     writeData(20, 0)
     writeData(21, 0)
     for i in range(7):
