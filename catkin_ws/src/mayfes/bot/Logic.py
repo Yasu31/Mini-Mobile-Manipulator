@@ -36,7 +36,7 @@ class Logic:
         self.url ="https://sub-yasu31.pagekite.me"
         self.rooms = []
         self.debug = debug
-        self.nn = NeuralNetwork("okan")
+        self.nn = NeuralNetwork("mmm")
         self.nn.prepare()
         self.bridge = CvBridge()
         # for identifying this particular session later
@@ -45,7 +45,7 @@ class Logic:
         self.all_unlogged_messages = []  # messages not saved in all_received_messages
         self.filesmanager = FilesManager()
         self.make_paths()
-        self.phrases = self.filesmanager.load_phrases()
+        self.phrases = self.filesmanager.load_phrases("mmm")
         self.pub = rospy.Publisher('/command', String, queue_size=10)
         self.img_saver_pub = rospy.Publisher("/save_image", Image, queue_size=1)
         self.audio_pub = rospy.Publisher('/audio', String, queue_size=1)

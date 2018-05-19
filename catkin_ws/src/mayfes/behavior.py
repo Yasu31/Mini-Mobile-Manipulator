@@ -18,7 +18,7 @@ unit_wait = 2.0
 
 hand_opened = 0.24
 
-repertoire = ['america', 'daisy']
+repertoire = ['daisy']
 
 current_command = ""
 
@@ -108,6 +108,7 @@ def command_callback(msg):
     elif command == "pickup":
         print("picking up something from the ground...")
         print("first, moving to 'bird' position and opening hand")
+        playback.play("bird")
         hand(True)
 
         print("lowering arm")

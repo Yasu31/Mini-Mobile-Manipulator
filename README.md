@@ -33,8 +33,9 @@ careful- the MMM currently sources the  setup file  for the ice-cream catkin_ws!
 
 1. Run `roslaunch mmm_control robot.launch`on the robot. This will launch the arduino connection and the camera and QR code&circle tracking nodes.
 1. `python pagekite.py 5000 sub-yasu31.pagekite.me` on the PC will let it become a server for the LINE chatbot.
-* Run `python3 bot.py` the same computer that runs pagekite.py, this will start the LINE chatbot. This will publish stuff to the /command ros topic accordingly to control the robot.
-* Run `roslaunch mayfes behavior.launch` to start the actual behavior created for MayFes. This listens in on the /command ROS topic, and takes steps to realize that behavior.
+1. Run `python3 bot.py` the same computer that runs pagekite.py, this will start the LINE chatbot. This will publish stuff to the /command ros topic accordingly to control the robot.
+1. Run `roslaunch mayfes behavior.py` (on the robot, if the communication is unstable) to start the actual behavior created for MayFes. This listens in on the /command ROS topic, and takes steps to realize that behavior.
+1. run `roslaunch mayfes behavior.launch` on the PC.
 
 
 ### some tips(??)

@@ -14,9 +14,10 @@ class Playback:
     '''
     def __init__(self):
         self.pub = rospy.Publisher(
-            '/command/joint_states', JointState, queue_size=10)
+            '/command/joint_states', JointState, queue_size=2)
         self.rospack = rospkg.RosPack()
         self.isPlaying= False
+        self.interval = 2
 
     def play(self, name):
         if self.isPlaying:
@@ -27,7 +28,11 @@ class Playback:
         print("playing back rosbag called ", path)
         bag = rosbag.Bag(path, 'r')
         previous_t = None
+        count = 0
         for topic, msg, t in bag.read_messages(topics=['/joint_states']):
+            count += 1
+            if count%self.interval == 0:
+                continue
             if previous_t is not None:
                 rospy.sleep(t - previous_t)
             previous_t = t
