@@ -24,8 +24,7 @@ def playAudioCallback(data):
         return
     global rospack
     if data.data == "r2d2":
-        return
-        data.data = str(random.randint(1,21))
+        data.data = str(random.randint(0, 5))
     path = rospack.get_path('mmm_control')+"/audio/"+data.data+".wav"
     print(playing, "path")
     if os.path.exists(path):

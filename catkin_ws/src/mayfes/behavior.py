@@ -18,7 +18,8 @@ unit_wait = 2.0
 
 hand_opened = 0.24
 
-repertoire = ['daisy']
+repertoire = ['koi', 'daisy', 'let_it_go']
+song_index = 0
 
 current_command = ""
 
@@ -38,25 +39,24 @@ def publish_twist(msg):
 
 hand_current = None
 
+
 def circle_callback(msg):
     if len(msg.circles) == 0 or current_command != "follow":
         return
     x = 0
-    y=0
-    biggest_r=0
+    y = 0
+    biggest_r = 0
     for circle in msg.circles:
         if circle.radius > biggest_r:
-            biggest_r=circle.radius
+            biggest_r = circle.radius
             x = circle.center.x
-            y=circle.center.y
+            y = circle.center.y
     twist = Twist()
-    twist.linear.x = y/image_size[1] *2
+    twist.linear.x = y/image_size[1] * 2
     twist.angular.z = (x/image_size[0]-0.5)*4
     twist_pub.publish(twist)
-    
 
 
-            
 def js_callback(msg):
     '''
     records the angle of the hand, to be referenced in hand().
@@ -113,12 +113,10 @@ def command_callback(msg):
 
         print("lowering arm")
 
-
         print("closing hand")
         hand(False)
 
         print("raising arm back to 'bird' position")
-
 
     elif command == "open_hand":
         print("opening hand")
@@ -135,14 +133,15 @@ def command_callback(msg):
         audio_pub.publish("janken")
         playback.play("janken_"+str(random.randint(1, 3)))
     elif command == "dance":
-        song = repertoire[random.randint(0, len(repertoire)-1)]
+        song = repertoire[song_index % len(repertoire)]
+        song_index += 1
         print("dance command received, playing ", song)
         audio_pub.publish(song)
         playback.play(song)
-    elif command=="follow":
+    elif command == "follow":
         playback.play("follow")
         audio_pub.publish("r2d2")
-    elif command =="photo":
+    elif command == "photo":
         pass
     elif command == "bird":
         audio_pub.publish("r2d2")
@@ -155,10 +154,11 @@ if __name__ == "__main__":
     rospy.init_node("behavior", anonymous=True)
     tf_listener = tf.TransformListener()
     playback = Playback()
-    
+
     rospy.Subscriber("/command", String, command_callback)
     rospy.Subscriber("/joint_states", JointState, js_callback)
-    rospy.Subscriber("/opencv_apps/circles", CircleArrayStamped, circle_callback)
+    rospy.Subscriber("/opencv_apps/circles",
+                     CircleArrayStamped, circle_callback)
     twist_pub = rospy.Publisher("/turtle1/cmd_vel", Twist, queue_size=10)
     joint_pub = rospy.Publisher(
         "/command/joint_states", JointState, queue_size=10)

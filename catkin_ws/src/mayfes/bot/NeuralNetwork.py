@@ -26,7 +26,7 @@ class NeuralNetwork:
 
     def train(self):
         x, y = self.generateData()
-        num_epochs = 500
+        num_epochs = 400
         # maximum num of chacacters in the training data messages
         max_input_length = x.shape[1]
         input_dimensions = x.shape[2]  # how many types of characters there are

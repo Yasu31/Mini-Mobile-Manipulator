@@ -21,8 +21,8 @@ class NeuralNetwork:
         self.botname = botname
         self.parser = Parser()
         self.filesmanager = FilesManager()
-        self.max_input_length = 100
-        self.state_size = 400
+        self.max_input_length = 40
+        self.state_size = 300
 
     def train(self):
         x, y = self.generateData()
@@ -84,7 +84,7 @@ class NeuralNetwork:
     def prepare(self):
         backprop_length = self.max_input_length
         input_dimensions = 49  # same as model
-        num_classes = 31  # same as model
+        num_classes = 45  # same as model
         state_size = self.state_size  # same as model
         self.createModel(backprop_length, input_dimensions,
                          num_classes, state_size)

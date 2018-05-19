@@ -23,7 +23,7 @@ class Logic:
         self.url = "https://sub-yasu31.pagekite.me"
         self.rooms = []
         self.debug = debug
-        self.nn = NeuralNetwork("okan")
+        self.nn = NeuralNetwork("mmm")
         self.nn.prepare()
         # for identifying this particular session later
         self.id = int(time.time())
@@ -31,7 +31,7 @@ class Logic:
         self.all_unlogged_messages = []  # messages not saved in all_received_messages
         self.filesmanager = FilesManager()
         self.make_paths()
-        self.phrases = self.filesmanager.load_phrases()
+        self.phrases = self.filesmanager.load_phrases("mmm")
         self.define_permissions()
         self.latest_image = None
 
@@ -114,7 +114,7 @@ class Logic:
         if matchobj is None:
             self.print_debug("did not find command")
             return text
-        text = "ごめんなさいね、今はロボット本体のデモはしていないので、動かすコマンドは使えないんです…"
+        text = matchobj.group(0)+"のコマンドを受信しましたが、ごめんなさいね、今はロボット本体のデモはしていないので、動かすコマンドは使えないんです…"
 
     def receive_text(self, user_id, group_id, text):
         '''

@@ -42,21 +42,24 @@ fail_counter = 0
 
 # https://github.com/kplindegaard/smbus2
 # send NOUN and VERB
+
+
 def writeData(noun, verb):
     bytesToSend_tmp = struct.pack('!hh', noun, verb)
-    checkdigit = sum([int.from_bytes([byte], byteorder='big', signed=False) for byte in bytesToSend_tmp])%256
+    checkdigit = sum([int.from_bytes([byte], byteorder='big', signed=False)
+                      for byte in bytesToSend_tmp]) % 256
     bytesToSend = struct.pack('!hhB', noun, verb, checkdigit)
     global bus, using_bus
     try:
-#        while using_bus:
-#            time.sleep(0.01)
-        using_bus=True
+        #        while using_bus:
+        #            time.sleep(0.01)
+        using_bus = True
         bus.write_i2c_block_data(address, 0, list(bytesToSend))
-        using_bus=False
+        using_bus = False
     except OSError:
         global fail_counter
-        fail_counter +=1
-        if fail_counter>50:
+        fail_counter += 1
+        if fail_counter > 50:
             print("too many errors, so exiting...")
             exit()
     except:
@@ -75,16 +78,18 @@ def readData():
     intList = []
     global bus, using_bus
     try:
-#        while using_bus:
-#            time.sleep(0.05)
-        using_bus=True
-        block = bus.read_i2c_block_data(address, 0)#, NUM_BYTES)
-        using_bus=False
+        #        while using_bus:
+        #            time.sleep(0.05)
+        using_bus = True
+        block = bus.read_i2c_block_data(address, 0)  # , NUM_BYTES)
+        using_bus = False
         if len(block) < NUM_BYTES:
             print("Too few data received; "+str(len(block)))
             raise Exception
-        check_digit=int.from_bytes([block[NUM_BYTES-1]], byteorder='big', signed=False)
-        check_sum=sum([int.from_bytes([byte], byteorder='big', signed=False) for byte in block[0:NUM_BYTES-1]])%256
+        check_digit = int.from_bytes(
+            [block[NUM_BYTES-1]], byteorder='big', signed=False)
+        check_sum = sum([int.from_bytes([byte], byteorder='big', signed=False)
+                         for byte in block[0:NUM_BYTES-1]]) % 256
         if check_sum != check_digit:
             # This happens more often than you'd think...
             print("Check digit not consistent. Ignoring...")
@@ -101,7 +106,7 @@ def readData():
     except OSError:
         global fail_counter
         fail_counter += 1
-        if fail_counter>50:
+        if fail_counter > 50:
             print("OsError received, exiting...")
             exit()
     except:
@@ -115,7 +120,7 @@ corrections = [-1, 1, -1, 1, -1, -1, 1]
 
 def publishSensors():
     pub = rospy.Publisher('/joint_states', JointState, queue_size=10)
-    rate = rospy.Rate(7)
+    rate = rospy.Rate(5)
     jointState = JointState()
     time.sleep(1)
     sensorInfos = None
@@ -171,7 +176,7 @@ def sendJointCallback(data):
         deg = int(radian * 180.0 / 3.14 * 100.0) * corrections[j]
         writeData(j, deg)
         writeData(j+10, 1)
-        #if firstReceive[j]:
+        # if firstReceive[j]:
         #    writeData(j+10, 1)
         #    firstReceive[j] = False
 
@@ -188,13 +193,15 @@ def joint0Callback(msg):
     writeData(0, int(msg.data*180.0/3.14*100.0)*corrections[0])
     return
 
+
 def stiffenCallback(msg):
     i = int(msg.data)
     if i != 1 or i != 0:
         return
     for j in range(7):
         writeData(j+10, i)
-        
+
+
 if __name__ == '__main__':
     try:
         rospy.init_node('node', anonymous=True)

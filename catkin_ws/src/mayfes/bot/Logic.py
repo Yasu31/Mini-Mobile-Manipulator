@@ -33,7 +33,7 @@ class Logic:
         debug: prints debug statements at each step.
         '''
         self.flask = flask
-        self.url ="https://sub-yasu31.pagekite.me"
+        self.url = "https://sub-yasu31.pagekite.me"
         self.rooms = []
         self.debug = debug
         self.nn = NeuralNetwork("mmm")
@@ -47,7 +47,8 @@ class Logic:
         self.make_paths()
         self.phrases = self.filesmanager.load_phrases("mmm")
         self.pub = rospy.Publisher('/command', String, queue_size=10)
-        self.img_saver_pub = rospy.Publisher("/save_image", Image, queue_size=1)
+        self.img_saver_pub = rospy.Publisher(
+            "/save_image", Image, queue_size=1)
         self.audio_pub = rospy.Publisher('/audio', String, queue_size=1)
         rospy.init_node("bot", anonymous=True)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.ar_callback)
@@ -55,7 +56,6 @@ class Logic:
         self.define_permissions()
         self.latest_image = None
         self.test_image = cv2.imread("./img/img.jpg")
-        
 
     def img_callback(self, msg):
         self.latest_image = msg
@@ -67,7 +67,7 @@ class Logic:
         lineid is the LINE ID used to check if the message is from the user, and id is an integer from 0~17 that indicate the current user's Alvar QR code ID (used for initial authorization, and for authorizing the sending of photos)
         pending_user is the person trying to gain access. If an Alvar QR code of that user's id is seen within 10 seconds, that pending_user becomes the current temporary user.
         '''
-        self.superuser = "awrafaegfa" #"Ud1ec870e773a12d3ff494a8ccf348153"  # me
+        self.superuser = "awrafaegfa"  # "Ud1ec870e773a12d3ff494a8ccf348153"  # me
         self.temp_user_lineid = ""
         self.temp_user_id = 0
         self.temp_user_time = 0
@@ -75,12 +75,10 @@ class Logic:
         self.pending_user_id = -1
         self.pending_user_time = 0
 
-        self.img_pending_name =""
-        self.img_pending_img = None # stores the saved image.
-        self.img_pending_time = 0 # image is not saved anymore 
-        
+        self.img_pending_name = ""
+        self.img_pending_img = None  # stores the saved image.
+        self.img_pending_time = 0  # image is not saved anymore
 
-        
     def decode(self, nn_prediction, debug=False):
         '''
         decode the output from the neural network.
@@ -137,12 +135,15 @@ class Logic:
         matchobj = re.search(command_signifier, text)
         if matchobj is None:
             self.print_debug("did not find command")
-            self.audio_pub.publish("r2d2")
+            if user_id == self.temp_user_lineid:
+                self.audio_pub.publish("r2d2")
             return text
         text = text[matchobj.end():]
-        text=re.sub("\$", "", text)
+        text = re.sub("\$", "", text)
         command = re.sub("\$", "", matchobj.group())
-        if (user_id == self.superuser) or (user_id == self.temp_user_lineid and time.time() - self.temp_user_time < 180):
+        if (user_id == self.superuser) or (user_id == self.temp_user_lineid and time.time() - self.temp_user_time < 40):
+            if user_id == self.temp_user_lineid:
+                self.temp_user_time = time.time()
             self.print_debug("verified user. Received command "+command)
             self.pub.publish(command)
             if command == "photo":
@@ -150,28 +151,32 @@ class Logic:
                 self.audio_pub.publish("shutter")
                 time.sleep(3)
                 self.img_pending_img = self.latest_image
-                self.img_pending_name = str(self.img_pending_img.header.stamp.secs)
+                self.img_pending_name = str(
+                    self.img_pending_img.header.stamp.secs)
                 self.img_pending_time = time.time()
                 if user_id == self.superuser:
                     print("having the image_saver node save the image...")
                     self.img_saver_pub.publish(self.img_pending_img)
-                    self.img_pending_img= None
+                    self.img_pending_img = None
                 return "photo"
             return text
         else:
             self.print_debug("Unverified user.")
             self.pending_user_lineid = user_id
-            self.pending_user_id = random.randint(0,17)
-            self.pending_user_time=time.time()
+            self.pending_user_id = random.randint(0, 4)
+            self.pending_user_time = time.time()
+            self.audio_pub.publish("beacon")
             return self.pending_user_id
+
     def ar_callback(self, msg):
         '''
         receives AlvarMarkers message
         '''
         for marker in msg.markers:
-            if marker.id == self.pending_user_id and time.time()-self.pending_user_time<10:
-                self.print_debug("verified pending user. Upgrading user to temporary user...")
-                self.temp_user_id=self.pending_user_id
+            if marker.id == self.pending_user_id and time.time()-self.pending_user_time < 20:
+                self.print_debug(
+                    "verified pending user. Upgrading user to temporary user...")
+                self.temp_user_id = self.pending_user_id
                 self.temp_user_lineid = self.pending_user_lineid
                 self.temp_user_time = time.time()
                 self.audio_pub.publish("chime")
@@ -181,12 +186,11 @@ class Logic:
             if marker.id == self.temp_user_id:
                 if self.img_pending_img is not None:
                     # save the image to file system
-                    if time.time() - self.img_pending_time < 10:
+                    if time.time() - self.img_pending_time < 30:
                         self.audio_pub.publish("chime")
                         print("having the image_saver node save the image...")
                         self.img_saver_pub.publish(self.img_pending_img)
                         self.img_pending_img = None
-
 
     def receive_text(self, user_id, group_id, text):
         '''
@@ -214,15 +218,16 @@ class Logic:
             if isinstance(rep_text, int):
                 # unverified user is trying to issue commands, so send message with QR code
                 url = self.url + "/img/" + str(rep_text) + ".jpg"
-                self.print_debug("unverified user, so sending image "+ url)
-                reply = ImageSendMessage(original_content_url=url, preview_image_url =url)
+                self.print_debug("unverified user, so sending image " + url)
+                reply = ImageSendMessage(
+                    original_content_url=url, preview_image_url=url)
                 self.rooms[i].send_text(url)
                 return reply
             if rep_text == "photo":
                 url = self.url + "/img/" + self.img_pending_name+".jpg"
                 self.print_debug("sending image "+url)
-                reply = TextSendMessage(text = url+" check it out")
-                #reply = ImageSendMessage(original_content_url=url, preview_image_url = url)
+                reply = TextSendMessage(
+                    text=url+" 画像が見えるようにするためには、もう一度QRコードをかざしてください。")
                 self.rooms[i].send_text(url)
                 return reply
             else:
