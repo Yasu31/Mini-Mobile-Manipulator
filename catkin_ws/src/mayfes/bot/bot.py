@@ -166,7 +166,7 @@ if __name__ == "__main__":
     # https://docs.python.org/3.6/library/queue.html
     eventsQueue = Queue(maxsize=100)
     analyze_messages_threads = []
-    for i in range(5):
+    for i in range(10):
         analyze_messages_threads.append(Thread(target=analyze_messages))
         # this will stop the thread when ctrl-c is called
         # https://stackoverflow.com/questions/11815947/cannot-kill-python-script-with-ctrl-c
