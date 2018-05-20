@@ -75,8 +75,10 @@ def hand(open_hand):
     js.position.append(0)
     global joint_pub
     if open_hand:
-        js.position[0] = hand_opened
-        joint_pub.publish(js)
+        for i in range(10):
+            js.position[0] = hand_opened
+            joint_pub.publish(js)
+            rospy.sleep(0.1)
     else:
         for i in range(30):
             global hand_current
@@ -112,6 +114,7 @@ def command_callback(msg):
         hand(True)
 
         print("lowering arm")
+        rospy.sleep(1)
 
         print("closing hand")
         hand(False)
