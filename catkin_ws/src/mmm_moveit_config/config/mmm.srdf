@@ -10,35 +10,22 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="manipulator">
-        <joint name="link0_link1_joint" />
-        <joint name="link1_link2_joint" />
-        <joint name="link2_link3_joint" />
-        <joint name="link3_link4_joint" />
-        <joint name="link4_link5_joint" />
-        <joint name="link5_link6_joint" />
-        <joint name="link6_gripper_frame_joint" />
+        <chain base_link="link0" tip_link="gripper_frame" />
     </group>
     <group name="gripper">
+        <link name="gripper_frame" />
         <link name="link7" />
         <link name="link7b" />
-        <link name="camera" />
         <joint name="link6_link7_joint" />
+        <joint name="link6_link7b_joint" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="bird" group="manipulator">
         <joint name="link0_link1_joint" value="0" />
-        <joint name="link1_link2_joint" value="-0.5868" />
-        <joint name="link2_link3_joint" value="1.0471" />
-        <joint name="link3_link4_joint" value="-0.0518" />
-        <joint name="link4_link5_joint" value="1.4154" />
-        <joint name="link5_link6_joint" value="-0.3366" />
-    </group_state>
-    <group_state name="sleep" group="manipulator">
-        <joint name="link0_link1_joint" value="-0.9896" />
-        <joint name="link1_link2_joint" value="-0.5063" />
-        <joint name="link2_link3_joint" value="-0.8055" />
-        <joint name="link3_link4_joint" value="1.5707" />
-        <joint name="link4_link5_joint" value="-0.069" />
+        <joint name="link1_link2_joint" value="-0.5523" />
+        <joint name="link2_link3_joint" value="0.6559" />
+        <joint name="link3_link4_joint" value="0" />
+        <joint name="link4_link5_joint" value="1.5707" />
         <joint name="link5_link6_joint" value="0" />
     </group_state>
     <group_state name="zero" group="manipulator">
@@ -50,45 +37,35 @@
         <joint name="link5_link6_joint" value="0" />
     </group_state>
     <group_state name="look_down" group="manipulator">
-        <joint name="link0_link1_joint" value="-1.4499" />
-        <joint name="link1_link2_joint" value="-1.0471" />
+        <joint name="link0_link1_joint" value="-0.9839" />
+        <joint name="link1_link2_joint" value="-0.7134" />
         <joint name="link2_link3_joint" value="1.0471" />
         <joint name="link3_link4_joint" value="-1.5707" />
-        <joint name="link4_link5_joint" value="0.8285" />
-        <joint name="link5_link6_joint" value="-1.2946" />
+        <joint name="link4_link5_joint" value="1.1219" />
+        <joint name="link5_link6_joint" value="-1.5794" />
     </group_state>
-    <group_state name="look_front" group="manipulator">
+    <group_state name="lower" group="manipulator">
         <joint name="link0_link1_joint" value="0" />
-        <joint name="link1_link2_joint" value="-0.1266" />
-        <joint name="link2_link3_joint" value="0.817" />
-        <joint name="link3_link4_joint" value="0.0173" />
-        <joint name="link4_link5_joint" value="1.5362" />
+        <joint name="link1_link2_joint" value="0.2416" />
+        <joint name="link2_link3_joint" value="1.0471" />
+        <joint name="link3_link4_joint" value="0" />
+        <joint name="link4_link5_joint" value="1.5707" />
         <joint name="link5_link6_joint" value="0" />
     </group_state>
-    <group_state name="store" group="manipulator">
-        <joint name="link0_link1_joint" value="0.1812" />
-        <joint name="link1_link2_joint" value="0.2531" />
-        <joint name="link2_link3_joint" value="-1.0471" />
-        <joint name="link3_link4_joint" value="-0.2071" />
-        <joint name="link4_link5_joint" value="-1.0356" />
-        <joint name="link5_link6_joint" value="-1.8124" />
-    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="my-end-effector" parent_link="gripper_frame" group="gripper" />
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="World_joint" type="fixed" parent_frame="external" child_link="world" />
+    <end_effector name="end_effector" parent_link="gripper_frame" group="gripper" parent_group="manipulator" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base" link2="link0" reason="Adjacent" />
     <disable_collisions link1="base" link2="link1" reason="Never" />
-    <disable_collisions link1="camera" link2="link0" reason="Never" />
-    <disable_collisions link1="camera" link2="link1" reason="Never" />
-    <disable_collisions link1="camera" link2="link2" reason="Never" />
-    <disable_collisions link1="camera" link2="link3" reason="Never" />
-    <disable_collisions link1="camera" link2="link4" reason="Never" />
-    <disable_collisions link1="camera" link2="link5" reason="Never" />
-    <disable_collisions link1="camera" link2="link6" reason="Never" />
-    <disable_collisions link1="camera" link2="link7" reason="Never" />
-    <disable_collisions link1="camera" link2="link7b" reason="Adjacent" />
+    <disable_collisions link1="camera_mesh" link2="link0" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link1" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link2" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link3" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link4" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link5" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link6" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link7" reason="Never" />
+    <disable_collisions link1="camera_mesh" link2="link7b" reason="Adjacent" />
     <disable_collisions link1="link0" link2="link1" reason="Adjacent" />
     <disable_collisions link1="link0" link2="link2" reason="Never" />
     <disable_collisions link1="link0" link2="link3" reason="Never" />

@@ -1,0 +1,25 @@
+<launch>
+  <!-- Launch this ON THE RASPI first of all, then you can start using your robot -->
+  <!-- launches;
+  - joint state publisher
+  - joint command receiver
+  - camera node
+    -->
+
+  <!-- Generate/Load robot description file -->
+  <!-- This just loads the URDF into parameter "robot_description" -->
+  <include file="$(find mmm_description)/launch/description.launch"/>
+
+  <!-- Robot state publisher subscribe to joint states and publish "tf" transforms -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <node name="audio" pkg="mmm_control" type="audio.py" respawn="true" output="screen"/>
+
+  <!-- Uses i2c to communicate with Arduino, and to the robot- send and receive joint positions, send motor speed -->
+  <node name="parrot" pkg="mmm_control" type="parrot.py" respawn="true" output="screen" />
+
+  <!-- Rviz to vizualize robot -->
+  <!-- mmm.rviz holds the configuration for the RVIZ interface? -->
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d '$(find mmm_description)/rviz/mmm.rviz'"/>
+
+</launch>

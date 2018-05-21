@@ -1,26 +1,40 @@
 #!/usr/bin/env python3
-# import subprocess
 import os
 import rospy
-from std_msgs.msg import Int32
-# this is used to ensure that omxplayer isn't called multiple times while it's running. It seems to work.
-playing=False
+from std_msgs.msg import String
+from playsound import playsound
 import rospkg
-rospack=rospkg.RosPack()
+import random
+'''
+listens to the ros topic /audio, and plays the WAV
+file with the same integer filename.
+'''
+playing = False
+rospack = rospkg.RosPack()
 
-def playAudio(data):
+
+def playAudioCallback(data):
+    '''
+    the ros message should have the String type, and its content should be either:
+    - name of sound file (without .wav extension)
+    - "r2d2" plays a random r2d2 sound
+    '''
     global playing
-    i=data.data
-    if i<1 or i>22 or i==19 or playing:
+    if playing:
         return
-    playing=True
-    #os.system("omxplayer "+rospack.get_path('mmm_control')+"/audio/"+str(i)+".wav -o local --vol 800")
-    playing=False
+    global rospack
+    if data.data == "r2d2":
+        data.data = str(random.randint(0, 5))
+    path = rospack.get_path('mmm_control')+"/audio/"+data.data+".wav"
+    print(playing, "path")
+    if os.path.exists(path):
+        playing = True
+        playsound(path)
+        playing = False
+    else:
+        print("could not find file ", path)
 
-rospy.init_node('listener', anonymous=True)
-rospy.Subscriber("audio", Int32, playAudio, queue_size=3)
+
+rospy.init_node('audio_node', anonymous=True)
+rospy.Subscriber("/audio", String, playAudioCallback, queue_size=3)
 rospy.spin()
-
-# pub=rospy.Publisher('audio', Int32, queue_size=10)
-# rospy.init_node('talker', anonymous=True)
-# pub.publish(2)
