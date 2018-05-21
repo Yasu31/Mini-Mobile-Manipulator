@@ -1,4 +1,4 @@
-build
-devel
-logs
+build/*
+devel/*
+logs/*
 .catkin_tools/*

@@ -1,0 +1,4 @@
+<launch>
+  <!-- Launch the audio node. -->
+  <node name="audio" pkg="mmm_control" type="audio.py" respawn="true" output="screen" />
+</launch>

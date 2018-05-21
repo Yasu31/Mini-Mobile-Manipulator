@@ -170,13 +170,13 @@
     </inertial> -->
   </link>
 
-  <joint name="link7b_camera_joint" type="fixed">
+  <joint name="link7b_camera_mesh_joint" type="fixed">
     <parent link="link7b"/>
-    <child link="camera"/>
+    <child link="camera_mesh"/>
     <origin xyz="${21/1000} ${14.93/1000} ${13.9/1000}" rpy="0 ${25*PI/180} 0"/>
   </joint>
 
-  <link name="camera">
+  <link name="camera_mesh">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -194,12 +194,11 @@
     </inertial> -->
   </link>
 
-  <link name="raspicam"/>
-  <joint name="camera_raspicam_joint" type="fixed">
-    <parent link="camera"/>
-    <child link="raspicam"/>
-    <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}"/>
+  <link name="camera"/>
+  <joint name="camera_mesh_camera_joint" type="fixed">
+    <parent link="camera_mesh"/>
+    <child link="camera"/>
+    <origin xyz="0 0 0" rpy="${-PI/2} 0 ${-PI/2}"/>
   </joint>
-
 
 </robot>

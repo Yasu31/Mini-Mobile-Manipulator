@@ -11,5 +11,6 @@ controller_list:
       - link4_link5_joint
       - link5_link6_joint
   - name: gripper_controller
+    default: true
     joints:
       - link6_link7_joint

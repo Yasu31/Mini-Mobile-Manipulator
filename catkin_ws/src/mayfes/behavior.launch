@@ -1,0 +1,12 @@
+<launch>
+  <!--
+This should be run on a PC with a screen.
+Also run either (mmm_control robot.launch camera.launch) or (mmm_control only_arduino.launch and ar_track.launch and camera.launch).
+  -->
+  <include file="$(find mmm_description)/launch/rviz.launch"/>
+  
+  <include file="$(find mmm_control)/launch/audio.launch"/>
+  <node name="image_saver" pkg="mayfes" type="image_saver.py" output="screen" respawn="true"/>
+
+
+</launch>

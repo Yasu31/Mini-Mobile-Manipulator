@@ -23,6 +23,7 @@ Not searching for unused variables given on the command line.
 [36m--[0m Using CATKIN_ENABLE_TESTING: ON
 [36m--[0m Call enable_testing()
 [36m--[0m Using CATKIN_TEST_RESULTS_DIR: /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/build/mmm_control/test_results
+[36m--[0m Found gmock sources under '/usr/src/gmock': gmock will be built
 [36m--[0m Looking for pthread.h
 [36m--[0m Looking for pthread.h - found
 [36m--[0m Looking for pthread_create
@@ -32,9 +33,9 @@ Not searching for unused variables given on the command line.
 [36m--[0m Looking for pthread_create in pthread
 [36m--[0m Looking for pthread_create in pthread - found
 [36m--[0m Found Threads: TRUE
-[36m--[0m Found gtest sources under '/usr/src/gtest': gtests will be built
+[36m--[0m Found gtest sources under '/usr/src/gmock': gtests will be built
 [36m--[0m Using Python nosetests: /usr/bin/nosetests-2.7
-[36m--[0m catkin 0.7.8
+[36m--[0m catkin 0.7.11
 [36m--[0m Configuring done
 [36m--[0m Generating done
 [36m--[0m Build files have been written to: /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/build/mmm_control

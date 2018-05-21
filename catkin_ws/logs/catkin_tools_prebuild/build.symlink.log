@@ -1,32 +1,8 @@
-Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./_setup_util.py
-Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.sh
-Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.bash
 Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.zsh
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.sh
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./_setup_util.py
 Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./env.sh
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.bash
+Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc
 Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
 Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
-Symlinking /home/yasu/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/setup.bash, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.bash)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/setup.zsh, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.zsh)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/_setup_util.py, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./_setup_util.py)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/env.sh, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./env.sh)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/setup.sh, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.sh)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake)
-Cleaning: (/home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/.private/catkin_tools_prebuild/lib/pkgconfig/catkin_tools_prebuild.pc, /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc)
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.bash
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.zsh
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./_setup_util.py
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./env.sh
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/./setup.sh
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
-Already unlinked: {}
-Unlinking: /home/pi/GitHub/Mini-Mobile-Manipulator/catkin_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc
-Already unlinked: {}
