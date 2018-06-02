@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 The Neural Network interface for the chatbot.
 Use this to train the NN as well as to actually use it.
@@ -12,20 +13,20 @@ import numpy as np
 import tensorflow as tf
 import os
 
-botname = "okan"
+botname = "mmm"
 
 
 class NeuralNetwork:
-    def __init__(self, botname="okan"):
+    def __init__(self, botname="mmm"):
         self.botname = botname
         self.parser = Parser()
         self.filesmanager = FilesManager()
-        self.max_input_length = 100
+        self.max_input_length = 40
         self.state_size = 400
 
     def train(self):
         x, y = self.generateData()
-        num_epochs = 300
+        num_epochs = 400
         # maximum num of chacacters in the training data messages
         max_input_length = x.shape[1]
         input_dimensions = x.shape[2]  # how many types of characters there are
@@ -34,7 +35,7 @@ class NeuralNetwork:
         state_size = self.state_size
         # how many types of output classes? (how many responses?)
         num_classes = y.shape[1]
-        self.batch_size = 5
+        self.batch_size = 7
         batch_size = self.batch_size
 
         print("max input length\t", max_input_length)
@@ -83,7 +84,7 @@ class NeuralNetwork:
     def prepare(self):
         backprop_length = self.max_input_length
         input_dimensions = 49  # same as model
-        num_classes = 31  # same as model
+        num_classes = 45  # same as model
         state_size = self.state_size  # same as model
         self.createModel(backprop_length, input_dimensions,
                          num_classes, state_size)
@@ -201,7 +202,7 @@ class NeuralNetwork:
 
 if __name__ == "__main__":
     train = True
-    nn = NeuralNetwork("okan_simple")
+    nn = NeuralNetwork(botname)
     if train:
         nn.train()
     else:

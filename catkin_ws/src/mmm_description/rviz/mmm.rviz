@@ -70,6 +70,10 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        camera_mesh:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
           Value: true
         gripper_frame:
           Alpha: 1
@@ -120,10 +124,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        raspicam:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         world:
           Alpha: 1
           Show Axes: false
@@ -149,10 +149,26 @@ Visualization Manager:
         All Enabled: false
         ar_marker_0:
           Value: true
+        ar_marker_1:
+          Value: true
+        ar_marker_16:
+          Value: true
+        ar_marker_17:
+          Value: true
+        ar_marker_177:
+          Value: true
+        ar_marker_186:
+          Value: true
+        ar_marker_249:
+          Value: true
+        ar_marker_255:
+          Value: true
         base:
           Value: true
         camera:
           Value: false
+        camera_mesh:
+          Value: true
         gripper_frame:
           Value: true
         link0:
@@ -172,8 +188,6 @@ Visualization Manager:
         link7:
           Value: true
         link7b:
-          Value: true
-        raspicam:
           Value: true
         world:
           Value: true
@@ -197,11 +211,24 @@ Visualization Manager:
                           link7:
                             {}
                           link7b:
-                            camera:
-                              ar_marker_0:
-                                {}
-                              raspicam:
-                                {}
+                            camera_mesh:
+                              camera:
+                                ar_marker_0:
+                                  {}
+                                ar_marker_1:
+                                  {}
+                                ar_marker_16:
+                                  {}
+                                ar_marker_17:
+                                  {}
+                                ar_marker_177:
+                                  {}
+                                ar_marker_186:
+                                  {}
+                                ar_marker_249:
+                                  {}
+                                ar_marker_255:
+                                  {}
       Update Interval: 0
       Value: true
   Enabled: true

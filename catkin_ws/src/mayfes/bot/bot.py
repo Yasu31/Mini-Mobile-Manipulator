@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 from xml.dom import minidom
 import os
 # https://qiita.com/akabei/items/38f974716f194afea4a5
@@ -33,7 +34,7 @@ def load_credentials():
     create an XML file in the same directory as this script, with the structure:
     <data><token> *channel access token* </token>
     <secret> *channel secret" </secret></data>
-'''
+    '''
     xdoc = minidom.parse("credentials.xml")
     token = xdoc.getElementsByTagName("token")[0].childNodes[0].data
     secret = xdoc.getElementsByTagName("secret")[0].childNodes[0].data
@@ -80,38 +81,37 @@ def analyze_messages():
     constantly running, waiting for a message to come into the queue.
     Run as many threads of these as you want.
     '''
-    print("waiting for message event...")
-    events = eventsQueue.get(block=True)
-    print(len(events), "number of events received")
-    for event in events:
-        replies = []
-        user_id, group_id = check_profile(event.source)
-        if user_id == "Udeadbeefdeadbeefdeadbeefdeadbeef":
-            print("connection check message.")
-            continue
-        if isinstance(event.message, TextMessage):
-            print("message received, Analyzing source...")
-            replies.append(logic.receive_text(
-                user_id, group_id, event.message.text))
-        elif isinstance(event.message, (ImageMessage, VideoMessage, AudioMessage)):
-            if isinstance(event.message, ImageMessage):
-                ext = '.jpg'
-            elif isinstance(event.message, VideoMessage):
-                ext = '.mp4'
+    while not rospy.is_shutdown():
+        print("waiting for message event...")
+        events = eventsQueue.get(block=True)
+        print(len(events), "number of events received")
+        for event in events:
+            reply = TextSendMessage(text="oopsies")
+            user_id, group_id = check_profile(event.source)
+            if user_id == "Udeadbeefdeadbeefdeadbeefdeadbeef":
+                print("connection check message.")
+                continue
+            if isinstance(event.message, TextMessage):
+                print("message received, Analyzing source...")
+                reply = logic.receive_text(
+                    user_id, group_id, event.message.text)
+            elif isinstance(event.message, (ImageMessage, VideoMessage, AudioMessage)):
+                if isinstance(event.message, ImageMessage):
+                    ext = '.jpg'
+                elif isinstance(event.message, VideoMessage):
+                    ext = '.mp4'
+                else:
+                    ext = '.m4a'
+                reply = logic.receive_media(
+                    user_id, group_id, line_bot_api.get_message_content(event.message.id), ext)
             else:
-                ext = '.m4a'
-            replies.append(logic.receive_media(
-                user_id, group_id, line_bot_api.get_message_content(event.message.id), ext))
-        else:
-            continue
-        global replying
-        while replying:
-            time.sleep(0.01)
-        replying = True
-        line_bot_api.reply_message(event.reply_token, replies)
-        replying = False
-    # recursive function!
-    analyze_messages()
+                continue
+            global replying
+            while replying:
+                time.sleep(0.01)
+            replying = True
+            line_bot_api.reply_message(event.reply_token, reply)
+            replying = False
 
 
 @app.route("/callback", methods=['POST'])
@@ -154,6 +154,9 @@ def callback():
 
 @app.route('/img/<filename>')
 def return_picture(filename):
+    '''
+    all the images in the ./img directory are visible!
+'''
     # based on https://github.com/chokepoint/flaskgur/blob/master/flaskgur/flaskgur.py
     return send_from_directory('./img', filename)
 
@@ -163,7 +166,7 @@ if __name__ == "__main__":
     # https://docs.python.org/3.6/library/queue.html
     eventsQueue = Queue(maxsize=100)
     analyze_messages_threads = []
-    for i in range(5):
+    for i in range(10):
         analyze_messages_threads.append(Thread(target=analyze_messages))
         # this will stop the thread when ctrl-c is called
         # https://stackoverflow.com/questions/11815947/cannot-kill-python-script-with-ctrl-c
@@ -173,4 +176,5 @@ if __name__ == "__main__":
     logic = Logic(flask=app)
     atexit.register(logic.save_log)
     app.run(host="0.0.0.0", port=port)
+    rospy.spin()
     eventsQueue.join()

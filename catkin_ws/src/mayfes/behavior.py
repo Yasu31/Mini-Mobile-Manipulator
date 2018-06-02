@@ -2,14 +2,15 @@
 
 import rospy
 import sys
-import moveit_commander
-import moveit_msgs.msg
+#import moveit_commander
+#import moveit_msgs.msg
 from sensor_msgs.msg import JointState
-from std_msgs.msg import String
+from std_msgs.msg import String, Int32
 from geometry_msgs.msg import Twist
 import tf
 import random
 from playback import Playback
+from opencv_apps.msg import CircleArrayStamped
 
 unit_forward = 2.0
 unit_turn = 2.0
@@ -17,7 +18,12 @@ unit_wait = 2.0
 
 hand_opened = 0.24
 
-repertoire = ['america', 'daisy']
+repertoire = ['koi', 'daisy', 'let_it_go']
+song_index = 0
+
+current_command = ""
+
+image_size = [640, 480]
 
 
 def publish_twist(msg):
@@ -32,6 +38,23 @@ def publish_twist(msg):
 
 
 hand_current = None
+
+
+def circle_callback(msg):
+    if len(msg.circles) == 0 or current_command != "follow":
+        return
+    x = 0
+    y = 0
+    biggest_r = 0
+    for circle in msg.circles:
+        if circle.radius > biggest_r:
+            biggest_r = circle.radius
+            x = circle.center.x
+            y = circle.center.y
+    twist = Twist()
+    twist.linear.x = y/image_size[1] * 2
+    twist.angular.z = (x/image_size[0]-0.5)*4
+    twist_pub.publish(twist)
 
 
 def js_callback(msg):
@@ -52,8 +75,10 @@ def hand(open_hand):
     js.position.append(0)
     global joint_pub
     if open_hand:
-        js.position[0] = hand_opened
-        joint_pub.publish(js)
+        for i in range(10):
+            js.position[0] = hand_opened
+            joint_pub.publish(js)
+            rospy.sleep(0.1)
     else:
         for i in range(30):
             global hand_current
@@ -66,8 +91,9 @@ def command_callback(msg):
     command = msg.data
     print("received command named ", command)
     twist = Twist()
+    global current_command
+    current_command = command
 
-    global arm_group
     if command == "forward":
         twist.linear.x = unit_forward
         publish_twist(twist)
@@ -81,55 +107,50 @@ def command_callback(msg):
         twist.angular.z = unit_turn
         publish_twist(twist)
 
-    if command == "pickup":
+    elif command == "pickup":
         print("picking up something from the ground...")
         print("first, moving to 'bird' position and opening hand")
-        arm_group.set_named_target("bird")
+        playback.play("bird")
         hand(True)
-        arm_group.go(wait=True)
 
         print("lowering arm")
-        arm_group.set_named_target("lower")
-        arm_group.go(wait=True)
+        rospy.sleep(1)
 
         print("closing hand")
         hand(False)
 
         print("raising arm back to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
 
-    elif command == "put_down":
-        print("moving to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
-        print("lowering arm")
-        arm_group.set_named_target("lower")
-        arm_group.go(wait=True)
-
+    elif command == "open_hand":
         print("opening hand")
         hand(True)
 
-        print("going back to 'bird' position")
-        arm_group.set_named_target("bird")
-        arm_group.go(wait=True)
-
     elif command == "relax":
-        pass
+        audio_pub.publish("r2d2")
+        stiffen_pub.publish(0)
     elif command == "stiffen":
-        pass
+        audio_pub.publish("r2d2")
+        stiffen_pub.publish(1)
     elif command == "janken":
         print("doing janken...")
         audio_pub.publish("janken")
         playback.play("janken_"+str(random.randint(1, 3)))
     elif command == "dance":
-        song = repertoire[random.randint(0, len(repertoire)-1)]
+        song = repertoire[song_index % len(repertoire)]
+        song_index += 1
         print("dance command received, playing ", song)
-        arm_group.set_named_target("zero")
-        arm_group.go(wait=True)
-
         audio_pub.publish(song)
         playback.play(song)
+    elif command == "follow":
+        playback.play("follow")
+        audio_pub.publish("r2d2")
+    elif command == "photo":
+        pass
+    elif command == "bird":
+        audio_pub.publish("r2d2")
+        playback.play("bird")
+    else:
+        current_command = ""
 
 
 if __name__ == "__main__":
@@ -137,25 +158,15 @@ if __name__ == "__main__":
     tf_listener = tf.TransformListener()
     playback = Playback()
 
-    print("============ Starting MoveIt! setup")
-    moveit_commander.roscpp_initialize(sys.argv)
-    robot = moveit_commander.RobotCommander()
-    scene = moveit_commander.PlanningSceneInterface()
-    arm_group = moveit_commander.MoveGroupCommander("manipulator")
-    arm_planning_frame = arm_group.get_planning_frame()
-    print("the arm_group's planning frame is ", arm_planning_frame)
-#    hand_group=moveit_commander.MoveGroupCommander("gripper")
-    display_trajectory_publisher = rospy.Publisher(
-        '/move_group/display_planned_path',
-        moveit_msgs.msg.DisplayTrajectory,
-        queue_size=20)
-
     rospy.Subscriber("/command", String, command_callback)
     rospy.Subscriber("/joint_states", JointState, js_callback)
+    rospy.Subscriber("/opencv_apps/circles",
+                     CircleArrayStamped, circle_callback)
     twist_pub = rospy.Publisher("/turtle1/cmd_vel", Twist, queue_size=10)
     joint_pub = rospy.Publisher(
         "/command/joint_states", JointState, queue_size=10)
     audio_pub = rospy.Publisher('/audio', String, queue_size=10)
+    stiffen_pub = rospy.Publisher("/stiffen", Int32, queue_size=1)
     print("PYTHON CODE IS READY")
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
