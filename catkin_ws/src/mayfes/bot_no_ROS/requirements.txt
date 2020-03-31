@@ -18,7 +18,7 @@ MarkupSafe==1.0
 numpy==1.14.3
 protobuf==3.5.2.post1
 pykakasi==0.93
-requests==2.18.4
+requests==2.20.0
 semidbm==0.5.1
 six==1.11.0
 tensorboard==1.8.0
